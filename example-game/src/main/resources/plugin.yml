@@ -1,0 +1,21 @@
+name: ExampleTobnetGame
+main: com.au5tie.mypetpie.ExampleTobnetPlugin
+version: ${project.version}
+description: A Sample Tobnet Engine Game
+author: [Your Name]
+website: [Your Website]
+load: POSTWORLD
+softdepend: [Multiverse-Core, Multiworld, HolographicDisplays, ActionBarAPI, LanguageAPI, SidebarAPI, ProtocolLib, CorpseReborn, CustomSoundManagerAPI]
+commands:
+  pie:
+    description: Sample pie commands.
+permissions:
+  Pie.*:
+    description: Gives access to all commands
+    children:
+      Pie.admin: true
+      Pie.user: true
+    default: op
+  Pie.user:
+    description: User level permissions to Tobnet
+    default: true
