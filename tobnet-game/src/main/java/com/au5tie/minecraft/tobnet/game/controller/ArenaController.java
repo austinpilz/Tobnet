@@ -34,7 +34,7 @@ public class ArenaController {
     /**
      * Adds {@link Arena} to the controller.
      * @param arena Arena.
-     * @author au5tie.
+     * @author au5tie
      */
     public void addArena(Arena arena) {
 
@@ -46,7 +46,7 @@ public class ArenaController {
     /**
      * Removes {@link Arena} from the controller.
      * @param arena Arena.
-     * @author au5tie.
+     * @author au5tie
      */
     public void removeArena(Arena arena) {
 
@@ -57,7 +57,7 @@ public class ArenaController {
      * Returns the {@link Arena} that encompasses the supplied {@link Location}.
      * @param location Location.
      * @return Arena that contains location.
-     * @author Austin Pilz n0286596
+     * @author au5tie
      */
     public Optional<Arena> getLocationArena(Location location) {
 
@@ -73,7 +73,7 @@ public class ArenaController {
      *
      * @param uuid Player UUID.
      * @return The arena the player is in, if any.
-     * @author Austin Pilz n0286596
+     * @author au5tie
      */
     public Optional<Arena> getPlayerArena(String uuid) {
 
@@ -87,7 +87,7 @@ public class ArenaController {
     /**
      * Returns the {@link ArenaSetupSessionController}.
      * @return Arena Setup Session Controller.
-     * @au5tie
+     * @author au5tie
      */
     public ArenaSetupSessionController getSetupSessionController() {
 

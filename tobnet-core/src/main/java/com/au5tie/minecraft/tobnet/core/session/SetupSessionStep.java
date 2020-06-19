@@ -1,7 +1,10 @@
 package com.au5tie.minecraft.tobnet.core.session;
 
 import lombok.Getter;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 /**
  * This class represents a distinct step which will can be registered to be invoked during a setup session. The step is
@@ -18,12 +21,27 @@ public abstract class SetupSessionStep {
     private final String name;
     private final int order;
     private boolean complete;
+    private SetupSession setupSession;
 
-    public SetupSessionStep(String name, int order) {
+    private String displayName;
+    private ChatColor promptBorderColor;
+
+    /**
+     * @param name The internal step name.
+     * @param displayName The display name of the step to be used in chat.
+     * @param order Step order.
+     * @author au5tie
+     */
+    public SetupSessionStep(String name, String displayName, int order, SetupSession setupSession) {
 
         this.name = name;
+        this.displayName = displayName;
         this.order = order;
         this.complete = false;
+        this.setupSession = setupSession;
+
+        // Default the border color. This can be changed by the implementing step ez.
+        promptBorderColor = ChatColor.AQUA;
     }
 
     /**
@@ -31,39 +49,92 @@ public abstract class SetupSessionStep {
      *
      * This is the point where the actual processing of the step needs to be implemented by each extending step.
      *
-     * @param player Player.
+     * @param context Invocation Context.
+     * @return  If the step invocation was completed successfully.
      * @author au5tie
      */
-    protected abstract void invoke(Player player);
+    protected abstract boolean invoke(SetupSessionStepInvocationContext context);
+
+    /**
+     * Displays the prompt of the step to the user. This should be utilized to provide the user with instruction on how
+     * to invoke the step. The prompt and the invocation are separate operations.
+     *
+     * Note: This will only be invoked by the prompt displayed if there is a player associated with the context. If there
+     * is no player with the entire prompt is being generated, the body will not attempt to be displayed either.
+     *
+     * @param context Invocation Context.
+     * @author au5tie
+     */
+    protected abstract void displayPromptBody(SetupSessionStepInvocationContext context);
+
+    /**
+     * Sets the {@link ChatColor} to be used for the prompt's border (header & footer).
+     * @param color Color.
+     * @author au5tie
+     */
+    public void setPromptBorderColor(ChatColor color) {
+
+        this.promptBorderColor = color;
+    }
+
+    /**
+     * Displays the initial step prompt to the user. This will take care of the custom border and header for the step.
+     * This delegates the context of the prompt to the implementing step via the displayPromptBody() method.
+     * @param context Invocation Context.
+     * @author au5tie
+     */
+    public final void displayPrompt(SetupSessionStepInvocationContext context) {
+
+        if (context.hasPlayer()) {
+            // ----------- [StepName] | 0/n -----------
+            String header = getPromptBorderColor() + "----------------- " + getDisplayName() + " | " + getOrder() + " / " + getSetupSession().getSteps().size() + " -----------------";
+            context.getPlayer().sendMessage(header);
+
+            // Allow the implementing step to display the body to the user.
+            displayPromptBody(context);
+
+            // ----------------------------------------
+            StringBuilder footer = new StringBuilder();
+            footer.append(getPromptBorderColor());
+
+            // Make the footer dashes go as far out as the total length of the header, since it can vary depending on step name and such.
+            Arrays.stream(header.split("")).forEach(character -> footer.append("-"));
+            context.getPlayer().sendMessage(footer.toString());
+        }
+    }
 
     /**
      * Invokes the step processing. This handles preparation of the step, invocation of the implementing step processing,
      * and auto completing the step (if enabled) post processing.
-     * @param player Player.
+     *
+     * This will evaluate the invocation success. If the step was successfully invoked and responds as having completed
+     * successfully, this will mark the step as having been completed.
+     *
+     * @param context Invocation Context.
      * @author au5tie
      */
-    public final void invokeStep(Player player) {
+    public final void invokeStep(SetupSessionStepInvocationContext context) {
 
         // Invoke the implementing step.
-        invoke(player);
+        boolean invocationSuccess = invoke(context);
 
-        if (!disableAutoCompletion()) {
-            // Auto-complete the step so the session will advance to the next step.
+        if (invocationSuccess) {
+            // The step invocation was successful, mark the step as having been complete.
             completeStep();
         }
     }
 
     /**
-     * Dictates if the step should not be auto-completed once the step has been invoked. By default, once the step has
+     * Dictates if the step should not be auto-continue once the step has been invoked. By default, once the step has
      * been invoked, it will automatically be set to complete so the session will advance to the next step.
      *
      * This is sometimes done when a step validates the type of a location or object and the validation fails, thus
      * requiring the step to be invoked again during the next user action.
      *
-     * @return If step auto completion after invocation should be disabled.
+     * @return If step auto continue after completion should be disabled.
      * @author au5tie
      */
-    protected boolean disableAutoCompletion() {
+    protected boolean disableAutoContinue() {
 
         return false;
     }
