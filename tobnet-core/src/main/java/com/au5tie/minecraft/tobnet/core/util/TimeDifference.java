@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game.util;
+package com.au5tie.minecraft.tobnet.core.util;
 
 import lombok.AllArgsConstructor;
 

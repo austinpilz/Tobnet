@@ -15,12 +15,12 @@ public abstract class SetupSessionController {
 
     /**
      * Begins a new {@link SetupSession} for the requested player. This method should create the new session in the
-     * implemeing class, creating the SetupSession of the generic type.
+     * implementing class, creating the SetupSession of the generic type.
      * @param player Player.
      * @return Setup Session.
      * @author au5tie
      */
-    abstract SetupSession prepareNewSession(Player player);
+    protected abstract SetupSession prepareNewSession(Player player);
 
     /**
      * Registers a new {@link SetupSession} with the controller.
@@ -88,6 +88,14 @@ public abstract class SetupSessionController {
         // Register the new session with the controller.
         addSession(session);
 
+        // Build the initial context to kick off the session.
+        SetupSessionStepInvocationContext context = SetupSessionStepInvocationContext.builder()
+                .player(player)
+                .build();
+
+        // Auto notify the session we're getting started.
+        session.onSessionBegin(context);
+
         return session;
     }
 
@@ -97,7 +105,6 @@ public abstract class SetupSessionController {
      * @author au5tie
      */
     public boolean requestSessionTermination(String playerUuid) {
-
         // Locate the session in progress.
         Optional<SetupSession> session = getUserSession(playerUuid);
 
@@ -115,8 +122,19 @@ public abstract class SetupSessionController {
         }
     }
 
-    public void sessionStepInvoke(String playerUuid) {
-        //
+    public void sessionStepInvoke(String playerUuid, SetupSessionStepInvocationContext context) {
+        // Locate the session in progress.
+        Optional<SetupSession> session = getUserSession(playerUuid);
+
+        if (session.isPresent()) {
+            // The session has been found, let it know we want to invoke the next step.
+            session.get().invokeStep(context);
+
+            if (session.get().isComplete()) {
+                // De-register the session with the controller.
+                removeSession(playerUuid);
+            }
+        }
     }
 
     /**

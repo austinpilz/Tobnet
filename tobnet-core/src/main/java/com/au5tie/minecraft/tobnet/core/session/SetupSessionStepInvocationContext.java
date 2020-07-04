@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * The SetupSessionStepInvocationContext serves as the context for the step being invoked by the user. It's designed
  * to convey information of the various data points that setup session rely upon. For example, the player invoking the
@@ -21,7 +23,7 @@ public class SetupSessionStepInvocationContext {
     private Player player;
     private Block block;
     private String command;
-    //TODO Args?
+    private List<String> commandArguments;
 
     /**
      * @return If the context has a player associated to it.

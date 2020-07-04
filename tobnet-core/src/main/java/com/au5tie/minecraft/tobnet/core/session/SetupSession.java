@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.core.session;
 
+import com.au5tie.minecraft.tobnet.core.util.TobnetLogUtils;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bukkit.entity.Player;
@@ -15,11 +16,13 @@ public abstract class SetupSession {
     private final String playerUuid;
     private final Player player;
     private final List<SetupSessionStep> steps;
+    private boolean complete;
 
     public SetupSession(Player player) {
 
         this.player = player;
         this.playerUuid = player.getUniqueId().toString();
+        this.complete = false;
 
         // Steps.
         this.steps = new ArrayList<>();
@@ -70,6 +73,32 @@ public abstract class SetupSession {
     }
 
     /**
+     * Called when the session is beginning for the first time. This will begin the session by displaying the prompt
+     * message of the first step to be invoked to the user.
+     * @param context Invocation Context.
+     * @author au5tie
+     */
+    protected void onSessionBegin(SetupSessionStepInvocationContext context) {
+        // Find the first step which is to be invoked.
+        Optional<SetupSessionStep> step = determineNextInvocableStep();
+
+        if (step.isPresent()) {
+            // Prompt the first step.
+            step.get().displayPrompt(context);
+        }
+    }
+
+
+    /**
+     * Called when all of the steps in the session have been completed successfully. This is the responsibility to each
+     * implementing Setup Session to provide the implementation for what should happen when the session completes.
+     * @author au5tie
+     */
+    protected void onSessionComplete(SetupSessionStepInvocationContext context) {
+        //
+    }
+
+    /**
      * Called when the session is being terminated by the controller. This is designed to allow the session to perform any
      * cleanup operations before being de-registered from the controller and becoming unreachable.
      * @author au5tie
@@ -78,6 +107,12 @@ public abstract class SetupSession {
         //
     }
 
+    /**
+     * This will invoke the next invocable step. This will determine which step is next to be invoked and will notify
+     * the step of the invocation request.
+     * @param context Invocation Context.
+     * @author au5tie
+     */
     public void invokeStep(SetupSessionStepInvocationContext context) {
 
         // Find the next step which is to be invoked.
@@ -87,17 +122,37 @@ public abstract class SetupSession {
             // Invoke the step by passing in the context.
             step.get().invokeStep(context);
 
+            if (step.get().isComplete() && !step.get().disableAutoContinue()) {
+                // The step has been completed, let's auto continue to prompt the next step.
+                Optional<SetupSessionStep> nextStep = determineNextInvocableStep();
 
+                if (nextStep.isPresent()) {
+                    // Auto display the prompt for the next step.
+                    nextStep.get().displayPrompt(context);
+                } else {
+                    // There is no next step, meaning the session is complete.
+                    completeSession(context);
+                }
+            }
         } else {
             // There is no next invocable step.
             //TODO What happens when the session is completed?
+            TobnetLogUtils.warn("There is no next invocable step.");
         }
+    }
 
+    /**
+     * Completes the session. This will notify the implementing class that the session is being completed and will then
+     * mark the session as being completed.
+     * @param context Invocation Context.
+     * @author au5tie
+     */
+    private void completeSession(SetupSessionStepInvocationContext context) {
+        // Notify the implementing class that we're finishing up the session.
+        onSessionComplete(context);
 
-
-        // if it's been completed and auto continue is enable, recursivly invoke the next
-
-
+        // Mark the session as having been complete.
+        this.complete = true;
     }
 
     /**
@@ -113,6 +168,24 @@ public abstract class SetupSession {
             return steps.stream()
                     .filter(step -> !step.isComplete()) // Find only steps which have not yet been completed.
                     .sorted(Comparator.comparingInt(SetupSessionStep::getOrder)) // Order them by order ASC.
+                    .findFirst();
+        } else {
+            // There are no registered session steps.
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Obtains an {@link SetupSessionStep} by the provided internal name.
+     * @param name Name.
+     * @return Setup Session Step.
+     * @author au5tie
+     */
+    protected final Optional<SetupSessionStep> getStepByName(String name) {
+
+        if (CollectionUtils.isNotEmpty(steps)) {
+            return steps.stream()
+                    .filter(step -> step.getName().equalsIgnoreCase(name))
                     .findFirst();
         } else {
             // There are no registered session steps.

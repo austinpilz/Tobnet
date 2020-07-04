@@ -1,7 +1,10 @@
 package com.au5tie.minecraft.tobnet.game.session.arena;
 
+import com.au5tie.minecraft.tobnet.core.arena.Arena;
 import com.au5tie.minecraft.tobnet.core.session.SetupSession;
 import com.au5tie.minecraft.tobnet.core.session.SetupSessionStep;
+import com.au5tie.minecraft.tobnet.core.session.SetupSessionStepInvocationContext;
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.session.arena.step.ArenaSetupSessionStepBoundaryOne;
 import com.au5tie.minecraft.tobnet.game.session.arena.step.ArenaSetupSessionStepName;
 import lombok.Getter;
@@ -30,12 +33,26 @@ public class ArenaSetupSession extends SetupSession {
         registerStep(nameStep);
 
         // Boundary One.
-        ArenaSetupSessionStepBoundaryOne boundaryOneStep = new ArenaSetupSessionStepBoundaryOne(1);
+        ArenaSetupSessionStepBoundaryOne boundaryOneStep = new ArenaSetupSessionStepBoundaryOne(1, this);
         registerStep(boundaryOneStep);
 
         // Boundary Two.
-        ArenaSetupSessionStepBoundaryOne boundaryTwoStep = new ArenaSetupSessionStepBoundaryOne(2);
-        registerStep(boundaryTwoStep);
+        ArenaSetupSessionStepBoundaryOne boundaryTwoStep = new ArenaSetupSessionStepBoundaryOne(2, this);
+        //registerStep(boundaryTwoStep);
 
+    }
+
+        @Override
+    protected void completeSession(SetupSessionStepInvocationContext context) {
+
+        ArenaSetupSessionStepName nameStep = (ArenaSetupSessionStepName)getStepByName("arena-name").get();
+
+        Arena arena = new Arena(nameStep.getArenaName());
+
+        TobnetGamePlugin.getArenaController().addArena(arena);
+
+        if (context.hasPlayer()) {
+            context.getPlayer().sendMessage("Setup session completed successfully.");
+        }
     }
 }

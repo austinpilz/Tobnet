@@ -1,9 +1,9 @@
 package com.au5tie.minecraft.tobnet.game;
 
 import com.au5tie.minecraft.tobnet.core.arena.Arena;
+import com.au5tie.minecraft.tobnet.core.util.TimeDifference;
+import com.au5tie.minecraft.tobnet.core.util.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
-import com.au5tie.minecraft.tobnet.game.util.TimeDifference;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDateTime;

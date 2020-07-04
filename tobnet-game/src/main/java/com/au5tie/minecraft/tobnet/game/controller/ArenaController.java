@@ -1,9 +1,9 @@
 package com.au5tie.minecraft.tobnet.game.controller;
 
 import com.au5tie.minecraft.tobnet.core.arena.Arena;
+import com.au5tie.minecraft.tobnet.core.util.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.arena.util.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.session.arena.ArenaSetupSessionController;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -81,6 +81,19 @@ public class ArenaController {
                 .filter(arena -> ArenaManagerUtils.getPlayerManager(arena)
                         .orElseThrow(() -> new RuntimeException("Arena " + arena + " does not have a registered Player Manager"))
                         .isPlaying(uuid))
+                .findFirst();
+    }
+
+    /**
+     * Obtains an {@link Arena} by the supplied arena name.
+     * @param arenaName Arena Name.
+     * @return Arena, if one exists.
+     * @author au5tie
+     */
+    public Optional<Arena> getArenaByName(String arenaName) {
+
+        return arenas.stream()
+                .filter(arena -> arena.getName().equalsIgnoreCase(arenaName))
                 .findFirst();
     }
 

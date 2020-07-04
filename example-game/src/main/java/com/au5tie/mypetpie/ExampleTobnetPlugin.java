@@ -5,7 +5,6 @@ import com.au5tie.minecraft.tobnet.core.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.chest.ArenaChestManager;
 import com.au5tie.minecraft.tobnet.game.arena.spawn.ArenaSpawnLocationManager;
-import com.au5tie.minecraft.tobnet.game.session.arena.ArenaSetupSessionController;
 import com.au5tie.mypetpie.manager.PieManager;
 
 public class ExampleTobnetPlugin extends TobnetGamePlugin {
@@ -14,6 +13,8 @@ public class ExampleTobnetPlugin extends TobnetGamePlugin {
         //
 
         testArenaConfig();
+
+        getCommand("pie").setExecutor(new TempCommandHandler());
     }
 
     public void disablePlugin() {
@@ -42,10 +43,5 @@ public class ExampleTobnetPlugin extends TobnetGamePlugin {
         // Get the chest controller and simulate a chest closed event.
         ArenaChestManager arenaChestManager = (ArenaChestManager)arena.getManager(ArenaManagerType.CHEST).get();
         arenaChestManager.getEventHandler().inventoryCloseEvent(null);
-
-
-        ArenaSetupSessionController setupSessionController = TobnetGamePlugin.getArenaController().getSetupSessionController();
-        setupSessionController.requestNewSession(null);
-
     }
 }
