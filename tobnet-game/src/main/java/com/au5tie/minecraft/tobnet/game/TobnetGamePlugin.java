@@ -1,9 +1,13 @@
 package com.au5tie.minecraft.tobnet.game;
 
-import com.au5tie.minecraft.tobnet.core.arena.Arena;
-import com.au5tie.minecraft.tobnet.core.util.TimeDifference;
-import com.au5tie.minecraft.tobnet.core.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.admin.TobnetArenaCommandListener;
+import com.au5tie.minecraft.tobnet.game.command.CommandController;
 import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
+import com.au5tie.minecraft.tobnet.game.io.ArenaStorageManager;
+import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
+import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
+import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
+import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDateTime;
@@ -12,15 +16,17 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
 
     public static TobnetGamePlugin instance;
 
+    private static CommandController commandController;
     private static ArenaController arenaController;
+
+    private static ExternalStorage externalStorage;
+
+    public static String chatPrefix = "[Tobnet] ";
 
     public TobnetGamePlugin() {
 
         // Instance.
         instance = this;
-
-        // Arena.
-        this.arenaController = new ArenaController();
     }
 
     /**
@@ -38,17 +44,29 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     public abstract void disablePlugin();
 
     @Override
-    public void onEnable() {
+    public final void onEnable() {
 
         // Begin loading the engine.
         LocalDateTime pluginLoadStart = LocalDateTime.now();
         TobnetLogUtils.getLogger().info("Engine loading begin.");
 
+        // Setup Controllers.
+        this.commandController = new CommandController(this);
+        this.arenaController = new ArenaController();
+
+        // External Storage Prep & Load.
+        this.externalStorage = new ExternalStorage();
+        externalStorage.onStartup();
+
         // Allow the implementing plugin to perform configuration of it's own.
         enablePlugin();
 
-        // Event Listeners.
-        registerEventListeners();
+        //TODO TEMPORARY??? Until I figure out how I want arenas to be loaded
+        ArenaStorageManager arenaStorageManager = (ArenaStorageManager)externalStorage.getManager(StorageManagerType.ARENA);
+        arenaStorageManager.loadArenas();
+
+        // Register Tobnet Engine global admin commands.
+        getCommandController().registerCommandLister(new TobnetArenaCommandListener());
 
         // Load complete. Log the round trip time.
         TobnetLogUtils.info("Engine loaded successfully. Took " +
@@ -56,10 +74,16 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
+    public final void onDisable() {
         // Begin unloading the engine.
         LocalDateTime pluginUnloadStart = LocalDateTime.now();
         TobnetLogUtils.getLogger().info("Engine unload begin.");
+
+        // Allow the implementing plugin to perform shutdown operations.
+        disablePlugin();
+
+        // Allow external storage to perform shutdown operations.
+        externalStorage.onShutdown();
 
         // Unload complete. Log the round trip time.
         TobnetLogUtils.info("Engine unloaded successfully. Took " +
@@ -76,31 +100,18 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
         return arenaController;
     }
 
+    /**
+     * Returns the {@link CommandController}.
+     * @return Command Controller.
+     * @author au5tie
+     */
+    public static CommandController getCommandController() {
+
+        return commandController;
+    }
+
     public static TobnetGamePlugin getInstance() {
 
         return instance;
-    }
-
-    /**
-     * Registers are necessary event listeners.
-     * @author au5tie
-     */
-    private void registerEventListeners() {
-
-        // Register arena-specific event listeners.
-        arenaController.getArenas().forEach(this::registerArenaListeners);
-    }
-
-    /**
-     * Registers all of the provided {@link Arena}'s
-     * as an event listener with Bukkit.
-     * @param arena Arena.
-     * @author au5tie
-     */
-    private void registerArenaListeners(Arena arena) {
-        // Register all of the arena's manager event handlers with Bukkit as an event listener.
-        arena.getManagers().forEach(manager -> getServer()
-                .getPluginManager()
-                .registerEvents(manager.getEventHandler(), this));
     }
 }

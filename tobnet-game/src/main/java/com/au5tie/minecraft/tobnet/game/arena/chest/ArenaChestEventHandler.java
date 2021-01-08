@@ -1,10 +1,9 @@
 package com.au5tie.minecraft.tobnet.game.arena.chest;
 
-import com.au5tie.minecraft.tobnet.core.arena.Arena;
-import com.au5tie.minecraft.tobnet.core.arena.chest.ArenaChest;
-import com.au5tie.minecraft.tobnet.core.arena.handler.ArenaEventHandler;
-import com.au5tie.minecraft.tobnet.core.util.TobnetLogUtils;
-import com.au5tie.minecraft.tobnet.game.arena.util.ArenaManagerUtils;
+import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
+import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
@@ -19,14 +18,14 @@ public class ArenaChestEventHandler extends ArenaEventHandler {
 
     private ArenaChestManager chestManager;
 
-    public ArenaChestEventHandler(Arena arena, ArenaChestManager manager) {
+    public ArenaChestEventHandler(TobnetArena arena, ArenaChestManager manager) {
 
         super(arena, manager);
 
         chestManager = manager;
     }
 
-   @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void inventoryOpenEvent(InventoryOpenEvent event) {
 
        if (ArenaManagerUtils.getPlayerManager(getArena()).get().isPlaying(event.getPlayer().getUniqueId().toString())) {

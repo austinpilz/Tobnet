@@ -1,10 +1,8 @@
 package com.au5tie.minecraft.tobnet.game.arena.chest;
 
-import com.au5tie.minecraft.tobnet.core.arena.Arena;
-import com.au5tie.minecraft.tobnet.core.arena.chest.ArenaChest;
-import com.au5tie.minecraft.tobnet.core.arena.chest.ArenaChestType;
-import com.au5tie.minecraft.tobnet.core.arena.manager.ArenaManager;
-import com.au5tie.minecraft.tobnet.core.arena.manager.ArenaManagerType;
+import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
+import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -16,13 +14,10 @@ public class ArenaChestManager extends ArenaManager {
 
     private final List<ArenaChest> chests;
 
-    public ArenaChestManager(Arena arena) {
+    public ArenaChestManager(TobnetArena arena) {
         super(arena);
 
         chests = new ArrayList<>();
-
-        // Register default event handler.
-        registerEventHandler(new ArenaChestEventHandler(arena, this));
     }
 
     @Override
@@ -32,12 +27,13 @@ public class ArenaChestManager extends ArenaManager {
 
     @Override
     public void prepareManager() {
-        //
+        // Register event handler.
+        registerEventHandler(new ArenaChestEventHandler(getArena(), this));
     }
 
     @Override
-    public ArenaChestEventHandler getEventHandler() {
-        return (ArenaChestEventHandler)super.getEventHandler();
+    public void destroyManager() {
+
     }
 
     /**

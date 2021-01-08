@@ -1,14 +1,19 @@
-name: ExampleTobnetGame
-main: com.au5tie.mypetpie.ExampleTobnetPlugin
+name: FridayThe14th
+main: com.au5tie.f13.FridayThe13thPlugin
 version: ${project.version}
-description: A Sample Tobnet Engine Game
-author: [Your Name]
-website: [Your Website]
+description: Friday the 13th
+author: Au5tie
+website: http://f13mc.com
 load: POSTWORLD
 softdepend: [Multiverse-Core, Multiworld, HolographicDisplays, ActionBarAPI, LanguageAPI, SidebarAPI, ProtocolLib, CorpseReborn, CustomSoundManagerAPI]
+api-version: 1.16
 commands:
-  pie:
-    description: Sample pie commands.
+  f13:
+    description: Friday the 13th Player Commands.
+  tobsetup:
+    description: Tobnet Engine setup command.
+  tobadmin:
+    description: Tobnet Engine admin command.
 permissions:
   Pie.*:
     description: Gives access to all commands
