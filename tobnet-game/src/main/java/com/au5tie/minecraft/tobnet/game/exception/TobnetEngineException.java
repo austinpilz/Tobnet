@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game;
+package com.au5tie.minecraft.tobnet.game.exception;
 
 public class TobnetEngineException extends RuntimeException {
 

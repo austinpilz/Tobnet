@@ -29,7 +29,7 @@ public class ArenaCountdownManager extends ArenaManager {
     private final ArenaCountdownConfiguration configuration;
     private final ArenaCountdownSecondsProvider secondsProvider;
 
-Upda    private ArenaTask arenaCountdownTask;
+    private ArenaTask arenaCountdownTask;
 
     private int secondsLeft;
     private LocalDateTime countdownLastUpdated;

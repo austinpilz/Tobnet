@@ -6,6 +6,7 @@ import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
 import com.au5tie.minecraft.tobnet.game.io.ArenaStorageManager;
 import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
 import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
+import com.au5tie.minecraft.tobnet.game.message.MessageController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,6 +17,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
 
     public static TobnetGamePlugin instance;
 
+    private static MessageController messageController;
     private static CommandController commandController;
     private static ArenaController arenaController;
 
@@ -51,6 +53,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
         TobnetLogUtils.getLogger().info("Engine loading begin.");
 
         // Setup Controllers.
+        this.messageController = new MessageController();
         this.commandController = new CommandController(this);
         this.arenaController = new ArenaController();
 
@@ -91,7 +94,19 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     }
 
     /**
+     * Returns the {@link MessageController}.
+     *
+     * @return Message Controller.
+     * @author au5tie
+     */
+    public static MessageController getMessageController() {
+
+        return messageController;
+    }
+
+    /**
      * Returns the {@link ArenaController}.
+     *
      * @return Arena Controller.
      * @author au5tie
      */
@@ -102,6 +117,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
 
     /**
      * Returns the {@link CommandController}.
+     *
      * @return Command Controller.
      * @author au5tie
      */

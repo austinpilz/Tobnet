@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.arena.countdown;
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.chat.ArenaChatManager;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameStatus;
@@ -8,6 +9,7 @@ import com.au5tie.minecraft.tobnet.game.arena.game.TobnetArenaStatusPreChangeEve
 import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
 import com.au5tie.minecraft.tobnet.game.time.TobnetTimeUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -92,7 +94,7 @@ public class ArenaCountdownEventHandler extends ArenaEventHandler {
 
             if ((event.getNewValue() <= 15 && event.getNewValue() > 5 && event.getNewValue() % 5 == 0) || (event.getNewValue() <= 5 && event.getNewValue() > 0)) {
                 // Send a message to all players in the arena.
-                chatManager.sendMessageToAllPlayers("Game begins in " + TobnetTimeUtils.secondsToDuration(event.getNewValue()));
+                chatManager.sendMessageToAllPlayers(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.COUNTDOWN_GAME_BEGINS, TobnetTimeUtils.secondsToDuration(event.getNewValue())));
             }
         }
     }
