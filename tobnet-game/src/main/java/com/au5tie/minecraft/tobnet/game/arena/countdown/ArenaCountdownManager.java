@@ -29,10 +29,10 @@ public class ArenaCountdownManager extends ArenaManager {
     private final ArenaCountdownConfiguration configuration;
     private final ArenaCountdownSecondsProvider secondsProvider;
 
-    ArenaTask arenaCountdownTask;
+Upda    private ArenaTask arenaCountdownTask;
 
-    int secondsLeft;
-    LocalDateTime countdownLastUpdated;
+    private int secondsLeft;
+    private LocalDateTime countdownLastUpdated;
 
     public ArenaCountdownManager(TobnetArena arena, ArenaCountdownConfiguration configuration, ArenaCountdownSecondsProvider secondsProvider) {
         super(arena);
@@ -100,7 +100,7 @@ public class ArenaCountdownManager extends ArenaManager {
                     .manager(this)
                     .mode(ArenaTaskMode.SYNC)
                     .type(ArenaTaskType.REPEATING)
-                    .initialDelay(1)
+                    .initialDelay(5)
                     .interval(5)
                     .build();
         }
