@@ -34,6 +34,7 @@ public class ArenaPlayerEventHandler extends ArenaEventHandler {
         if (playerManager.isPlaying(event.getPlayer().getUniqueId().toString())) {
             GamePlayer gamePlayer = playerManager.getGamePlayer(event.getPlayer().getUniqueId().toString());
 
+            // Notify the game that the player has left.
             playerManager.leaveGame(gamePlayer);
         }
     }
