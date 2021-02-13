@@ -9,4 +9,5 @@ import lombok.Getter;
 public class ArenaCountdownConfiguration extends ArenaConfiguration {
 
     private boolean displayChatIntervals = true;
+    private boolean displayCountdownUI = true;
 }

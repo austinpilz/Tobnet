@@ -74,7 +74,8 @@ public class ArenaCountdownManager extends ArenaManager {
 
     @Override
     public void destroyManager() {
-
+        // Only thing to do would be cancel the countdown which will stop task and remove display from all users.
+        stopCountdown();
     }
 
     @Override
@@ -219,7 +220,7 @@ public class ArenaCountdownManager extends ArenaManager {
      *
      * @author au5tie
      */
-    void heartbeat() {
+    final void heartbeat() {
         // Decrement the countdown.
         decrementCountdown();
 
@@ -238,16 +239,28 @@ public class ArenaCountdownManager extends ArenaManager {
      *
      * @author au5tie
      */
-    private void displayCountdownToUsers() {
+    private final void displayCountdownToUsers() {
 
-        // Register the countdown display component to all users who need it but do not already have it.
-        registerCountdownDisplayToUsers();
+        if (configuration.isDisplayCountdownUI()) {
+            // Register the countdown display component to all users who need it but do not already have it.
+            registerCountdownDisplayToUsers();
 
-        // Request that the countdown component be displayed. Will only be visible if highest priority.
-        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentDisplay(getPlayerCountdownDisplayComponentName()));
+            // Request that the countdown component be displayed. Will only be visible if highest priority.
+            getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentDisplay(getPlayerCountdownDisplayComponentName()));
 
-        // Keep the countdown display updated for each player with the current progress.
-        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> updateUserCountdownDisplay(player));
+            // Keep the countdown display updated for each player with the current progress.
+            getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> updateUserCountdownDisplay(player));
+        }
+    }
+
+    /**
+     * Hides the countdown display component from all players who have it.
+     *
+     * @author au5tie
+     */
+    private final void hideCountdownFromPlayers() {
+
+        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentHide(getPlayerCountdownDisplayComponentName()));
     }
 
     /**
@@ -257,21 +270,34 @@ public class ArenaCountdownManager extends ArenaManager {
      *
      * @author au5tie
      */
-    private void registerCountdownDisplayToUsers() {
+    private final void registerCountdownDisplayToUsers() {
         // Obtain all players who are missing the countdown display component, we'll need to create and register one for them.
         List<GamePlayer> players = getPlayerDisplayManager().getPlayersMissingComponent(getPlayerCountdownDisplayComponentName());
 
-        players.forEach(player -> player.getDisplayManager().registerComponent(createUserCountdownDisplay(player)));
+        // Register a new display component for each one.
+        players.forEach(player -> registerCountdownDisplayToUser(player));
     }
 
     /**
-     * Hides the countdown display component from all players who have it.
+     * Registers a new {@link ArenaCountdownDisplayComponent} with the player's display manager to display the countdown.
      *
+     * This will throw an exception if the generated component does not inherit from the ArenaCountdownDisplayComponent
+     * interface.
+     *
+     * @param player Player.
      * @author au5tie
      */
-    private void hideCountdownFromPlayers() {
+    private final void registerCountdownDisplayToUser(GamePlayer player) {
+        // Create the countdown display component.
+        GamePlayerDisplayComponent displayComponent = createUserCountdownDisplay(player);
 
-        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentHide(getPlayerCountdownDisplayComponentName()));
+        if (displayComponent != null && displayComponent instanceof ArenaCountdownDisplayComponent) {
+            // The display component is the right type, we can register it in good faith.
+            player.getDisplayManager().registerComponent(displayComponent);
+        } else {
+            // The component does not inherit the ArenaCountdownDisplayComponent class, so we'd be unable to update it.
+            throw new TobnetEngineException("The countdown display component provided to " + player + " must inherit from the ArenaCountdownDisplayComponent interface.");
+        }
     }
 
     /**
@@ -294,7 +320,7 @@ public class ArenaCountdownManager extends ArenaManager {
      * @param player Game player.
      * @author au5tie
      */
-    private void updateUserCountdownDisplay(GamePlayer player) {
+    private final void updateUserCountdownDisplay(GamePlayer player) {
 
        Optional<GamePlayerDisplayComponent> component = player.getDisplayManager().getComponent(getPlayerCountdownDisplayComponentName());
 
