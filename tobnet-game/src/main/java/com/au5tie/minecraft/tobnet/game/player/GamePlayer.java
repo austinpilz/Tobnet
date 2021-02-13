@@ -1,7 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.player;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.display.GamePlayerDisplayManager;
+import com.au5tie.minecraft.tobnet.game.player.display.GamePlayerDisplayManager;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

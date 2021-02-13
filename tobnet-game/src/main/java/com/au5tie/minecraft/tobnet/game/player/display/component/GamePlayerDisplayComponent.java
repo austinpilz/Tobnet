@@ -1,8 +1,10 @@
-package com.au5tie.minecraft.tobnet.game.display.component;
+package com.au5tie.minecraft.tobnet.game.player.display.component;
 
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 /**
  * A Game Player Display Component is a render-able visual component on a player's screen. It is specifically for a single
@@ -147,7 +149,19 @@ public abstract class GamePlayerDisplayComponent {
      */
     public boolean isHigherPriorityThan(GamePlayerDisplayComponent component) {
 
-        return getPriority() > component.getPriority();
+        return getPriority() < component.getPriority();
+    }
+
+    /**
+     * Determines if the current component is a higher priority than all of the provided components.
+     *
+     * @param components Component in question.
+     * @return If the component is higher priority than all provided components.
+     * @author au5tie
+     */
+    public boolean isHigherPriorityThanAll(List<GamePlayerDisplayComponent> components) {
+        // This one is the highest priority if there are none higher than us.
+        return components.stream().filter(component -> component.isHigherPriorityThan(this)).count() == 0;
     }
 
     /**
@@ -159,6 +173,6 @@ public abstract class GamePlayerDisplayComponent {
      */
     public boolean isLowerPriorityThan(GamePlayerDisplayComponent component) {
 
-        return getPriority() < component.getPriority();
+        return getPriority() > component.getPriority();
     }
 }

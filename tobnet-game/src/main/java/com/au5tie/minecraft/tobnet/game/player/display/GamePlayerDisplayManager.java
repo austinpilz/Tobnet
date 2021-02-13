@@ -1,8 +1,9 @@
-package com.au5tie.minecraft.tobnet.game.display;
+package com.au5tie.minecraft.tobnet.game.player.display;
 
-import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponent;
-import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponentLocation;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
+import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponent;
+import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponentLocation;
+import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
@@ -70,7 +71,6 @@ public class GamePlayerDisplayManager {
 
         // Destroy all of the components.
         displayComponents.values().forEach(GamePlayerDisplayComponent::destroyComponent);
-
         displayComponents.clear();
     }
 
@@ -151,7 +151,9 @@ public class GamePlayerDisplayManager {
 
         if (component.isPresent()) {
             // Mark that the component should be visible when priority allows.
-            component.get().setShouldBeVisible(true);
+            component.get().setShouldBeVisible(false);
+
+            TobnetLogUtils.info("Hiding " + name + " from " + getPlayer().getPlayer().getName());
 
             // Actually hide the component since hiding should be immediate.
             component.get().hideComponent();
@@ -187,6 +189,10 @@ public class GamePlayerDisplayManager {
 
         // Determine the highest priority component which should be in view.
         GamePlayerDisplayComponent highestPriorityComponent = getHighestPriorityComponent(shouldBeVisibleComponents);
+
+        if (highestPriorityComponent != null) {
+            TobnetLogUtils.info("Highest priority display is " + highestPriorityComponent.getName() + " with priority " + highestPriorityComponent.getPriority());
+        }
 
         if (currentlyVisibleComponent.isPresent()) {
             // Check to see if the one visible is the highest priority.

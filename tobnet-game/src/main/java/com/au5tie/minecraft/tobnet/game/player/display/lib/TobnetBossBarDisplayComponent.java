@@ -1,8 +1,8 @@
-package com.au5tie.minecraft.tobnet.game.display.lib;
+package com.au5tie.minecraft.tobnet.game.player.display.lib;
 
-import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponent;
-import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponentLocation;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
+import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponent;
+import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponentLocation;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -10,6 +10,13 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 
+/**
+ * Engine provided boss bar display component. This will display a boss bar (stackable) to the player and allow for
+ * value updates to progress the bar. It is easily configurable with the provided constructor arguments or can be
+ * overridden.
+ *
+ * @author au5tie
+ */
 @Getter
 public class TobnetBossBarDisplayComponent extends GamePlayerDisplayComponent {
 
@@ -41,13 +48,21 @@ public class TobnetBossBarDisplayComponent extends GamePlayerDisplayComponent {
     protected void hide() {
 
         bar.removePlayer(getPlayer().getPlayer());
+        bar.removeAll();
     }
 
     @Override
     protected void destroy() {
-        //
+        // Destroy process already calls hide, so let's just double check everyone has been removed.
+        bar.removeAll();
     }
 
+    /**
+     * Sets the boss bar progress on a scale of 0.0 - 1.0.
+     *
+     * @param progress Bar progress.
+     * @author au5tie
+     */
     protected void setProgress(double progress) {
 
         bar.setProgress(progress);

@@ -11,10 +11,10 @@ import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerDisplayManager;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTask;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
-import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
+import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import lombok.Getter;
 import org.bukkit.boss.BarColor;
@@ -149,6 +149,9 @@ public class ArenaCountdownManager extends ArenaManager {
             // The countdown task is running, let's cancel it.
             arenaCountdownTask.cancelTask();
         }
+
+        // Remove the countdown display from players so they can transition into the actual game.
+        hideCountdownFromPlayers();
     }
 
     /**
@@ -224,35 +227,73 @@ public class ArenaCountdownManager extends ArenaManager {
         displayCountdownToUsers();
     }
 
+    /**
+     * Displays the countdown display component to all users. This will take care of registering new display components
+     * for each player, making the component visible, and keeping it updated with the latest values. This is like the
+     * heartbeat of the update display.
+     *
+     * Players can join the countdown after it has begun, which is ok. Since this is called by the repeating task to update
+     * the countdown value, this will quickly add the countdown display for players who join at any point during the
+     * pre-game status. There is no need to worry about players not having the display at all.
+     *
+     * @author au5tie
+     */
     private void displayCountdownToUsers() {
 
-        // TODO Register. Document how this adds for people who join late.
+        // Register the countdown display component to all users who need it but do not already have it.
         registerCountdownDisplayToUsers();
 
+        // Request that the countdown component be displayed. Will only be visible if highest priority.
         getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentDisplay(getPlayerCountdownDisplayComponentName()));
 
-        // TODO Update.
+        // Keep the countdown display updated for each player with the current progress.
         getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> updateUserCountdownDisplay(player));
-
-
     }
 
+    /**
+     * This will create a new countdown display component and register it with the display manager for any player who does
+     * not already have it registered. This will not make the countdown visible, but rather setup the countdown display
+     * component for when we want to make it visible, which is a different operation.
+     *
+     * @author au5tie
+     */
     private void registerCountdownDisplayToUsers() {
-        // Obtain all players who are missing the countdown display component, we'll need to create and regiser one for them.
+        // Obtain all players who are missing the countdown display component, we'll need to create and register one for them.
         List<GamePlayer> players = getPlayerDisplayManager().getPlayersMissingComponent(getPlayerCountdownDisplayComponentName());
 
         players.forEach(player -> player.getDisplayManager().registerComponent(createUserCountdownDisplay(player)));
     }
 
+    /**
+     * Hides the countdown display component from all players who have it.
+     *
+     * @author au5tie
+     */
     private void hideCountdownFromPlayers() {
-        //
+
+        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentHide(getPlayerCountdownDisplayComponentName()));
     }
 
+    /**
+     * Creates the {@link ArenaCountdownDisplayComponentBossBar} display component for the provided player. This is the
+     * actual countdown display component which will get registered and rendered for the user display.
+     *
+     * @param player Player.
+     * @return Countdown display component.
+     * @author au5tie
+     */
     private GamePlayerDisplayComponent createUserCountdownDisplay(GamePlayer player) {
 
-        return new ArenaCountdownDisplayComponentBossBar(getPlayerCountdownDisplayComponentName(), 5, player, "Game Countdown", BarColor.WHITE, BarStyle.SOLID, BarFlag.CREATE_FOG);
+        return new ArenaCountdownDisplayComponentBossBar(getPlayerCountdownDisplayComponentName(), 2, player, "Game Countdown", BarColor.WHITE, BarStyle.SOLID, BarFlag.CREATE_FOG);
     }
 
+    /**
+     * Updates the countdown display component progress for the provided player. This will provide the player's specific
+     * countdown display component with the updated countdown stats.
+     *
+     * @param player Game player.
+     * @author au5tie
+     */
     private void updateUserCountdownDisplay(GamePlayer player) {
 
        Optional<GamePlayerDisplayComponent> component = player.getDisplayManager().getComponent(getPlayerCountdownDisplayComponentName());
