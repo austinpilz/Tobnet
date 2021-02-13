@@ -9,6 +9,7 @@ import com.au5tie.minecraft.tobnet.game.arena.countdown.start.ArenaCountdownSeco
 import com.au5tie.minecraft.tobnet.game.arena.countdown.start.ArenaCountdownSecondsStaticProvider;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameManager;
 import com.au5tie.minecraft.tobnet.game.arena.location.ArenaSpawnLocationManager;
+import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerDisplayManager;
 import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
 import com.au5tie.minecraft.tobnet.game.arena.sign.ArenaSignManager;
 import com.au5tie.minecraft.tobnet.game.arena.wait.ArenaWaitingRoomManager;
@@ -79,6 +80,9 @@ public class F13Arena extends TobnetArena {
 
         ArenaPlayerManager playerManager = new ArenaPlayerManager(this);
         registerManager(playerManager);
+
+        ArenaPlayerDisplayManager playerDisplayManager = new ArenaPlayerDisplayManager(this);
+        registerManager(playerDisplayManager);
     }
 
     private void prepareSignManager() {

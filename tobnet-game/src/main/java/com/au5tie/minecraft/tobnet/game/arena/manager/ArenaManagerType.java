@@ -7,6 +7,7 @@ public enum ArenaManagerType {
     CUSTOM,
     GAME,
     PLAYER,
+    PLAYER_DISPLAY,
     SIGN,
     SPAWN_POINT,
     TASK,

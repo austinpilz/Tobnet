@@ -90,7 +90,7 @@ public abstract class TobnetArena {
      * @author au5tie
      */
     public void registerManager(ArenaManager manager) {
-
+        // Register the manager within the arena.
         managers.put(manager.getType(), manager);
     }
 
@@ -110,6 +110,9 @@ public abstract class TobnetArena {
 
         // Register manager event listeners.
         registerManagerListeners();
+
+        // Notify all managers we've finished configuring them. This will allow them to dynamically link.
+        getManagers().forEach(ArenaManager::afterArenaPreparationComplete);
     }
 
     /**

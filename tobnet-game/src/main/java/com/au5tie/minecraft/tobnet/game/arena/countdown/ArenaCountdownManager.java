@@ -1,16 +1,29 @@
 package com.au5tie.minecraft.tobnet.game.arena.countdown;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.arena.countdown.display.ArenaCountdownDisplayComponent;
+import com.au5tie.minecraft.tobnet.game.arena.countdown.display.ArenaCountdownDisplayComponentBossBar;
 import com.au5tie.minecraft.tobnet.game.arena.countdown.start.ArenaCountdownSecondsProvider;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
+import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
+import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerDisplayManager;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTask;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
+import com.au5tie.minecraft.tobnet.game.display.component.GamePlayerDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
+import lombok.Getter;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The Arena Countdown Manager is responsible for the management of the countdown within the arena. It will manage the
@@ -24,6 +37,7 @@ import java.time.LocalDateTime;
  *
  * @author au5tie
  */
+@Getter
 public class ArenaCountdownManager extends ArenaManager {
 
     private final ArenaCountdownConfiguration configuration;
@@ -33,6 +47,9 @@ public class ArenaCountdownManager extends ArenaManager {
 
     private int secondsLeft;
     private LocalDateTime countdownLastUpdated;
+
+    private ArenaPlayerDisplayManager playerDisplayManager;
+    private final String playerCountdownDisplayComponentName = "countdown";
 
     public ArenaCountdownManager(TobnetArena arena, ArenaCountdownConfiguration configuration, ArenaCountdownSecondsProvider secondsProvider) {
         super(arena);
@@ -58,6 +75,12 @@ public class ArenaCountdownManager extends ArenaManager {
     @Override
     public void destroyManager() {
 
+    }
+
+    @Override
+    public void afterArenaPreparationComplete() {
+        // Link to the player display manager.
+        playerDisplayManager = (ArenaPlayerDisplayManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER_DISPLAY).orElseThrow(TobnetEngineException::new);
     }
 
     /**
@@ -196,30 +219,50 @@ public class ArenaCountdownManager extends ArenaManager {
     void heartbeat() {
         // Decrement the countdown.
         decrementCountdown();
+
+        // Display countdown to users.
+        displayCountdownToUsers();
     }
 
-    /*
-     TODO
+    private void displayCountdownToUsers() {
 
-     - Figure out how the engine will display the countdown and shit to the users. This will set the whole
-     pattern for how visual elements are managed on a per-user basis.
+        // TODO Register. Document how this adds for people who join late.
+        registerCountdownDisplayToUsers();
 
-     - Decide how the countdown is displayed to users. Is it just action bar? Is there a boss bar? How can
-     the implementing plugin customise this? Does it send messages in chat?
+        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager().requestComponentDisplay(getPlayerCountdownDisplayComponentName()));
 
-
-
+        // TODO Update.
+        getPlayerDisplayManager().getPlayerManager().getPlayers().forEach(player -> updateUserCountdownDisplay(player));
 
 
-    How will user display work?
+    }
 
-    Each user has a display manager? multiple managers?
+    private void registerCountdownDisplayToUsers() {
+        // Obtain all players who are missing the countdown display component, we'll need to create and regiser one for them.
+        List<GamePlayer> players = getPlayerDisplayManager().getPlayersMissingComponent(getPlayerCountdownDisplayComponentName());
 
-    You cannot unsubscribe a listener class from Bukkit, so each playing having their own listener doesn't
-    work.
+        players.forEach(player -> player.getDisplayManager().registerComponent(createUserCountdownDisplay(player)));
+    }
 
-    Player Manager -> Event Handler -> Events trigger -> Call player display manager of type?
+    private void hideCountdownFromPlayers() {
+        //
+    }
 
+    private GamePlayerDisplayComponent createUserCountdownDisplay(GamePlayer player) {
 
-     */
+        return new ArenaCountdownDisplayComponentBossBar(getPlayerCountdownDisplayComponentName(), 5, player, "Game Countdown", BarColor.WHITE, BarStyle.SOLID, BarFlag.CREATE_FOG);
+    }
+
+    private void updateUserCountdownDisplay(GamePlayer player) {
+
+       Optional<GamePlayerDisplayComponent> component = player.getDisplayManager().getComponent(getPlayerCountdownDisplayComponentName());
+
+       if (component.isPresent() && component.get() instanceof ArenaCountdownDisplayComponent) {
+
+           ArenaCountdownDisplayComponent displayComponent = (ArenaCountdownDisplayComponent) component.get();
+
+           // Update the progress of the display.
+           displayComponent.updateProgress(getSecondsLeft(), getStartingSeconds());
+       }
+    }
 }

@@ -54,6 +54,15 @@ public abstract class ArenaManager {
     public abstract void destroyManager();
 
     /**
+     * Notifies the manager that all of the initial arena managers have been fully setup and prepared.
+     *
+     * @author au5tie
+     */
+    public void afterArenaPreparationComplete() {
+        // Nothing by default.
+    }
+
+    /**
      * Registers an {@link ArenaEventHandler} to be used by the manager.
      *
      * @param eventHandler Arena Event Handler.

@@ -160,6 +160,9 @@ public class ArenaPlayerManager extends ArenaManager {
         // Notify listeners of player leaving.
         TobnetEventPublisher.publishEvent(new TobnetPlayerLeaveEvent(getArena(), player));
 
+        // Hide & destroy all display components for the user. This cleans up their display and all like references.
+        player.getDisplayManager().destroyComponents();
+
         // Remove player from manager.
         players.remove(player.getUuid());
     }
