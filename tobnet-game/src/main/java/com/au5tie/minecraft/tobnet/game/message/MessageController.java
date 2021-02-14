@@ -60,8 +60,10 @@ public final class MessageController {
 
         this.provider = provider;
 
-        // Publish an event out notifying that we've changed the message provider for the plugin.
-        TobnetEventPublisher.publishEvent(new TobnetMessageProviderChangedEvent(priorProvider, provider));
+        if (priorProvider != null) {
+            // Publish an event out notifying that we've changed the message provider for the plugin.
+            TobnetEventPublisher.publishEvent(new TobnetMessageProviderChangedEvent(priorProvider, provider));
+        }
     }
 
     /**
