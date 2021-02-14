@@ -9,6 +9,16 @@ import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+/**
+ * The Tobnet Message Controller acts as the engine's message dictionary and translator. It uses a {@link MessageProvider}
+ * as a dictionary of all game messages in a particular language. This allows implementing plugins to change the language
+ * of the messages sent/displayed in game.
+ *
+ * Implementing plugins are free to change the provider used for message lookup at any time by calling the changeProvider()
+ * method.
+ *
+ * @author au5tie
+ */
 public final class MessageController {
 
     private final MessageProvider defaultProvider;
@@ -64,7 +74,7 @@ public final class MessageController {
      * @return Translated message with injected arguments.
      * @author au5tie
      */
-    public String getMessage(String messageName, String... arguments) {
+    public final String getMessage(String messageName, String... arguments) {
 
         // Obtain the message from our selected provider.
         Optional<String> message = provider.getMessage(messageName);

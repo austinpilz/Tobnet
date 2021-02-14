@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.arena.countdown;
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.countdown.display.ArenaCountdownDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.arena.countdown.display.ArenaCountdownDisplayComponentBossBar;
@@ -13,6 +14,7 @@ import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
@@ -309,8 +311,10 @@ public class ArenaCountdownManager extends ArenaManager {
      * @author au5tie
      */
     private GamePlayerDisplayComponent createUserCountdownDisplay(GamePlayer player) {
+        // Obtain the translated title.
+        String title = TobnetGamePlugin.getMessageController().getMessage(MessageConstants.COUNTDOWN_DISPLAY_TITLE);
 
-        return new ArenaCountdownDisplayComponentBossBar(getPlayerCountdownDisplayComponentName(), 2, player, "Game Countdown", BarColor.WHITE, BarStyle.SOLID, BarFlag.CREATE_FOG);
+        return new ArenaCountdownDisplayComponentBossBar(getPlayerCountdownDisplayComponentName(), 2, player, title, BarColor.WHITE, BarStyle.SOLID, BarFlag.CREATE_FOG);
     }
 
     /**

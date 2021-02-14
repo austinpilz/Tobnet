@@ -13,5 +13,6 @@ public class EnglishMessageProvider extends MessageProvider {
 
         // Countdown.
         registerMessage(MessageConstants.COUNTDOWN_GAME_BEGINS, "Game begins in {0}");
+        registerMessage(MessageConstants.COUNTDOWN_DISPLAY_TITLE, "Game Countdown");
     }
 }
