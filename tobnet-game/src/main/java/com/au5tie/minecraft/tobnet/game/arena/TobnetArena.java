@@ -6,6 +6,7 @@ import com.au5tie.minecraft.tobnet.game.arena.convert.TobnetArenaConverter;
 import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -35,6 +36,7 @@ public abstract class TobnetArena {
 
     // Arena Managers.
     private Map<ArenaManagerType, ArenaManager> managers;
+    private boolean managerRegistrationComplete;
 
     // Converter.
     private TobnetArenaConverter converter;
@@ -55,6 +57,14 @@ public abstract class TobnetArena {
         managers = new HashMap<>();
         prepareArenaManagers();
     }
+
+    /**
+     * Prepares the arena's managers. This is where the implementing arena defines all of the managers which control the
+     * functionality of the arena overall.
+     *
+     * @author au5tie
+     */
+    protected abstract void prepareManagers();
 
     /**
      * Returns all of the Arena's {@link ArenaManager}.
@@ -90,8 +100,14 @@ public abstract class TobnetArena {
      * @author au5tie
      */
     public void registerManager(ArenaManager manager) {
-        // Register the manager within the arena.
-        managers.put(manager.getType(), manager);
+
+        if (!managerRegistrationComplete) {
+            // Register the manager within the arena.
+            managers.put(manager.getType(), manager);
+        } else {
+            // The manager registration period has ended.
+            throw new TobnetEngineException("Arena Manager registration period for " + getName() + " has ended.");
+        }
     }
 
     /**
@@ -111,17 +127,12 @@ public abstract class TobnetArena {
         // Register manager event listeners.
         registerManagerListeners();
 
+        // Mark that registration is complete which will not allow any further managers to register.
+        managerRegistrationComplete = true;
+
         // Notify all managers we've finished configuring them. This will allow them to dynamically link.
         getManagers().forEach(ArenaManager::afterArenaPreparationComplete);
     }
-
-    /**
-     * Prepares the arena's managers. This is where the implementing arena defines all of the managers which control the
-     * functionality of the arena overall.
-     *
-     * @author au5tie
-     */
-    protected abstract void prepareManagers();
 
     /**
      * Registers all of the manager's event listeners to Bukkit so they'll receive event notifications as they occur directly
