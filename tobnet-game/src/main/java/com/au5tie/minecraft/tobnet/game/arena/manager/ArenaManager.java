@@ -63,6 +63,16 @@ public abstract class ArenaManager {
     }
 
     /**
+     * Notifies the manager that all of the arena's storage has been loaded into the various storage managers and that
+     * this manager can safely reference/load those objects.
+     *
+     * @author au5tie
+     */
+    public void afterArenaStorageLoadComplete() {
+        // Nothing by default.
+    }
+
+    /**
      * Registers an {@link ArenaEventHandler} to be used by the manager.
      *
      * @param eventHandler Arena Event Handler.

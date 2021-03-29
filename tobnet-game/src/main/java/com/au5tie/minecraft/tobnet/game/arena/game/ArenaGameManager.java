@@ -11,6 +11,7 @@ import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTask;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 
 public class ArenaGameManager extends ArenaManager {
@@ -20,6 +21,9 @@ public class ArenaGameManager extends ArenaManager {
 
     // Scheduled Tasks.
     ArenaTask arenaGameStatusHeartbeatTask;
+
+    private ArenaCountdownManager countdownManager;
+    private ArenaPlayerManager playerManager;
 
     public ArenaGameManager(TobnetArena arena) {
 
@@ -48,6 +52,13 @@ public class ArenaGameManager extends ArenaManager {
     public void destroyManager() {
         // Cancel the heartbeat task.
         cancelArenaGameStatusHeartbeatTask();
+    }
+
+    @Override
+    public void afterArenaPreparationComplete() {
+
+        countdownManager = (ArenaCountdownManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.COUNTDOWN).orElseThrow(TobnetEngineException::new);
+        playerManager = (ArenaPlayerManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER).orElseThrow(TobnetEngineException::new);
     }
 
     /**
@@ -97,22 +108,27 @@ public class ArenaGameManager extends ArenaManager {
 
     /**
      * The heartbeat of the game. This method is invoked on a scheduled timer which evaluates the current status of the
-     * game and updates the status / takes action accordingly.
+     * game and updates the status / takes action accordingly. This is how the game is able to react to events which are
+     * not strictly event based, like a player leaving or dying. This will handle transitioning the game status when
+     * appropriate and ending it if needed.
      *
-     * TODO Document further
-     *
-     * @author
+     * @author au5tie
      */
     public void evaluateGameStatus() {
 
-        if (isStatusEmpty()) {
-            evaluateEmptyStatus();
-        } else if (isStatusWaiting()) {
-            evaluateWaitingStatus();
-        } else if (isStatusCountdown()) {
-            evaluateCountdownStatus();
-        } else if (isStatusInProgress()) {
-            //TODO
+        switch(gameStatus) {
+            case EMPTY:
+                evaluateEmptyStatus();
+                break;
+            case WAITING:
+                evaluateWaitingStatus();
+                break;
+            case COUNTDOWN:
+                evaluateCountdownStatus();
+                break;
+            case IN_PROGRESS:
+                evaluateInProgressStatus();
+                break;
         }
     }
 
@@ -123,8 +139,6 @@ public class ArenaGameManager extends ArenaManager {
      * @author au5tie
      */
     private void evaluateEmptyStatus() {
-
-        ArenaPlayerManager playerManager = getPlayerManager();
 
         if (playerManager.getNumberOfPlayers() > 0) {
             // When at least one player is present, we can transition to waiting state.
@@ -139,8 +153,6 @@ public class ArenaGameManager extends ArenaManager {
      * @author au5tie
      */
     private void evaluateWaitingStatus() {
-
-        ArenaPlayerManager playerManager = getPlayerManager();
 
         if (playerManager.getNumberOfPlayers() > 0) {
             // We have at least 1 player, so we aren't empty.
@@ -162,9 +174,6 @@ public class ArenaGameManager extends ArenaManager {
      */
     private void evaluateCountdownStatus() {
 
-        ArenaPlayerManager playerManager = (ArenaPlayerManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER).get();
-        ArenaCountdownManager countdownManager = (ArenaCountdownManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.COUNTDOWN).get();
-
         if (playerManager.getNumberOfPlayers() > 0 && areMinimumPlayerRequirementsMetToBegin()) {
 
             if (countdownManager.hasCountdownFinished()) {
@@ -174,6 +183,19 @@ public class ArenaGameManager extends ArenaManager {
         } else {
             // Transition the arena back to WAITING while we await requirements to be met. STOP THE COUNT lul
             changeGameStatus(ArenaGameStatus.WAITING);
+        }
+    }
+
+    /**
+     *
+     *
+     * @author au5tie
+     */
+    private void evaluateInProgressStatus() {
+
+        if (playerManager.getNumberOfPlayers() <= 0) {
+            // There are no players, so we should end the game.
+            endGame();
         }
     }
 
@@ -199,6 +221,18 @@ public class ArenaGameManager extends ArenaManager {
 
         // Log the status change.
         TobnetLogUtils.info("Arena " + getArena().getName() + " status changed from " + originalStatus + " to " + getGameStatus());
+    }
+
+    private void endGame() {
+
+        // Remove all players, if any.
+
+        // Reset all game-specific data points.
+
+        // Instruct managers to cancel any recurring tasks? They should self-manage.
+
+        // Change the game status back to empty now that the game has ended.
+        changeGameStatus(ArenaGameStatus.EMPTY);
     }
 
     /**
@@ -248,7 +282,7 @@ public class ArenaGameManager extends ArenaManager {
      * @author au5tie
      */
     @TobnetRecommendOverride
-    boolean areMinimumPlayerRequirementsMetToBegin() {
+    protected boolean areMinimumPlayerRequirementsMetToBegin() {
 
         // TODO
         return true;
@@ -264,18 +298,9 @@ public class ArenaGameManager extends ArenaManager {
      * @author au5tiw
      */
     @TobnetRecommendOverride
-    int getMaximumAllowedNumberOfPlayers() {
+    public int getMaximumAllowedNumberOfPlayers() {
         // Look at the gameplay configuration.
         // TODO
         return 2;
-    }
-
-    /**
-     * Returns the {@link ArenaPlayerManager}.
-     * @return Arena Player Manager.
-     * @author au5tie
-     */
-    private ArenaPlayerManager getPlayerManager() {
-        return ArenaManagerUtils.getPlayerManager(getArena()).get();
     }
 }

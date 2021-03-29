@@ -13,6 +13,7 @@ import java.util.List;
  * command routing. When the CommandListener is created, it will call the registerCommands() method which allows/requires
  * the implementing class to specify the commands it's interested in listening on. With the supported commands being a
  * list, a single CommandListener can listen to N number of top level commands.
+ *
  * @author au5tie
  */
 public abstract class CommandListener {

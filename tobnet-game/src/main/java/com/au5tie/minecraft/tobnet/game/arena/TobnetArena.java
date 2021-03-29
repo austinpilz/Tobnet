@@ -145,7 +145,7 @@ public abstract class TobnetArena {
      * @author au5tie
      */
     private void registerManagerListeners() {
-        // Compile all of the handlers registered by all of the anagers.
+        // Compile all of the handlers registered by all of the managers.
         List<ArenaEventHandler> handlers = new ArrayList<>();
         getManagers().forEach(manager -> handlers.addAll(manager.getEventHandlers()));
 

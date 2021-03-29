@@ -92,6 +92,10 @@ public class ArenaStorageManager extends StorageManager {
         Location locationTwo = new Location(Bukkit.getWorld(result.getString("World")), result.getDouble("B2X"),result.getDouble("B2Y"),result.getDouble("B2Z"));
         arena.setBoundaryTwo(locationTwo);
 
+        // Storage Load.
+        // TODO Load things like locations, signs, etc.
+        // Have to call all manager method to notify that load is complete.
+
         // Register the arena with the Arena Controller.
         TobnetGamePlugin.getArenaController().registerArena(arena);
     }
