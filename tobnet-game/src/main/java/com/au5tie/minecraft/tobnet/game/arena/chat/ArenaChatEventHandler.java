@@ -1,7 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.arena.chat;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.player.TobnetPlayerLeaveEvent;
 import com.au5tie.minecraft.tobnet.game.arena.player.TobnetPlayerPostJoinEvent;
 import org.bukkit.event.EventHandler;

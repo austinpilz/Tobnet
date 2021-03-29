@@ -1,6 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.arena.player;
 
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

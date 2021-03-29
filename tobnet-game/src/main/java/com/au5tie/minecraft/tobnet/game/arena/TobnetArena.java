@@ -3,7 +3,7 @@ package com.au5tie.minecraft.tobnet.game.arena;
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.convert.BaseArenaConverter;
 import com.au5tie.minecraft.tobnet.game.arena.convert.TobnetArenaConverter;
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
