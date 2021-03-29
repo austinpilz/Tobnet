@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game.arena.countdown;
+package com.au5tie.minecraft.tobnet.game.arena.chat;
 
 import com.au5tie.minecraft.tobnet.game.arena.configuration.ArenaConfiguration;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class ArenaCountdownConfiguration extends ArenaConfiguration {
+public class ArenaChatConfiguration extends ArenaConfiguration {
 
-    private boolean displayChatIntervals = true;
-    private boolean displayCountdownUI = true;
+    private boolean announcePlayerJoin = true;
+    private boolean announcePlayerLeave = true;
 }

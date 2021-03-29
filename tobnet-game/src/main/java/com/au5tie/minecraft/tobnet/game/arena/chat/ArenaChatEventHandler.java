@@ -2,6 +2,8 @@ package com.au5tie.minecraft.tobnet.game.arena.chat;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.player.TobnetPlayerLeaveEvent;
+import com.au5tie.minecraft.tobnet.game.arena.player.TobnetPlayerPostJoinEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -31,9 +33,41 @@ public class ArenaChatEventHandler extends ArenaEventHandler {
      * @param event Player chat event.
      * @author au5tie
      */
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerMessage(AsyncPlayerChatEvent event) {
         // Route the event back into the chat manager
         chatManager.handlePlayerToPlayerMessage(event);
+    }
+
+    /**
+     * Handles notifying the chat manager whenever a player joins our arena. This is how we'll be able to announce to players
+     * current in the game that someone new has joined.
+     *
+     * @param event Player Join Event.
+     * @author au5tie
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerJoin(TobnetPlayerPostJoinEvent event) {
+
+        if (getArena().equals(event.getArena())) {
+            // Player has joined our arena.
+            chatManager.announcePlayerJoin(event.getPlayer());
+        }
+    }
+
+    /**
+     * Handles notifying the chat manager when a player has left our arena. This is how we'll be able to announce to all
+     * players when one of their teammates has left the game/arena.
+     *
+     * @param event Player Leave Event.
+     * @author au5tie
+     */
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPlayerLeave(TobnetPlayerLeaveEvent event) {
+
+        if (getArena().equals(event.getArena())) {
+            // Player has left our arena.
+            chatManager.announcePlayerLeave(event.getPlayer());
+        }
     }
 }

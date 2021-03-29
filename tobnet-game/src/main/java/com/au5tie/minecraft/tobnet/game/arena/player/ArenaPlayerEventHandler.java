@@ -28,6 +28,14 @@ public class ArenaPlayerEventHandler extends ArenaEventHandler {
         // which we should send them to return point then. or spawn. idk.
     }
 
+    /**
+     * Monitors when players quit (or log-off) the server. This will alert the ongoing game if the player who has left
+     * was playing in this arena. This functionality is how we're able to catch players disconnecting and remove them
+     * from the game appropriately.
+     *
+     * @param event Player Quit Event.
+     * @author au5tie
+     */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
 
@@ -81,11 +89,6 @@ public class ArenaPlayerEventHandler extends ArenaEventHandler {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent event) {
-        //
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPlayerMessage(AsyncPlayerChatEvent event) {
         //
     }
 }

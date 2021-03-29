@@ -12,6 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>11</java.version>
         <spigot.api.version>1.15</spigot.api.version>
         <spigot.minor.version>2</spigot.minor.version>
         <spigot.version>${spigot.api.version}.${spigot.minor.version}-R0.1-SNAPSHOT</spigot.version>
@@ -82,8 +83,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
                 <plugin>

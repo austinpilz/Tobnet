@@ -54,6 +54,18 @@ public class ArenaPlayerManager extends ArenaManager {
     /**
      * Determines if the player is currently playing.
      *
+     * @param player Game Player.
+     * @return If the player is playing.
+     * @author au5tie.
+     */
+    public final boolean isPlaying(GamePlayer player) {
+
+        return isPlaying(player.getUuid());
+    }
+
+    /**
+     * Determines if the player is currently playing.
+     *
      * @param uuid Player UUID.
      * @return If the player is playing.
      * @author au5tie.
@@ -152,24 +164,17 @@ public class ArenaPlayerManager extends ArenaManager {
 
         // TODO NEXT to this. Figure out what to do to players when they join.
 
-        // onPlayerJoin
-        // onPlayerLeave
-        // To allow overriding player managers for easy customization
-
         // ON PLAYER JOIN
             // IF WAITING/EMPTY, announce arrival to all players.
 
+        // PLAYER ROLES
+            // Player status (Alive, Dead, Spectator)
+            // Player role (custom for jason, counselor, spectator, etc.)
 
-        // BASIC STUFF
-            // Alive vs Dead players?
-            // Each player has a TYPE (Spectator, Player, etc) and status (ALIVE, DEAD, SPECTATOR)?
-
-
-
-        // Integrate location storage and loading. Event based storage! No direct calls to IO for storing.
-
-
-        // Need to figure out player roles - spectators and such.
+        // LOCATIONS
+            // Store all locations via events.
+            // Load locations to generate Location Manager.
+            // Then each specialized manager will load from that generalized manager.
 
     }
 
@@ -215,6 +220,10 @@ public class ArenaPlayerManager extends ArenaManager {
     }
 
     protected void onPlayerLeave(GamePlayer player) {
+        //
+    }
+
+    protected void onPlayerDeath(GamePlayer player) {
         //
     }
 

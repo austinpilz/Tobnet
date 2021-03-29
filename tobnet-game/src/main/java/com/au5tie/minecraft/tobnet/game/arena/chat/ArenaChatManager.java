@@ -11,6 +11,8 @@ import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
+import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import lombok.Getter;
 import org.bukkit.ChatColor;
@@ -18,10 +20,19 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
+ * The Arena Chat Manager handles all of the player to player messaging management/routing, as well as the plugin sending
+ * messages to players. It acts as much as possible as the centralized messaging point for all chat messages to and from
+ * players.
  *
+ * Every {@link ArenaGameStatus} has a linked {@link TobnetChatHandler} which handles the chat in a specific way depending
+ * on the game status within the arena. This allows for deep customization of chat depending on the current progress of
+ * the game. You can register any of the Tobnet-provided {@link TobnetChatHandler}s or register your own which implements
+ * the interface. These handlers allow for deep messaging customization like chat isolation, proximity chat, etc. By default,
+ * the {@link OpenChatHandler} will be registered for every game status so that chat handles like vanilla Minecraft.
  *
  * @author au5tie
  */
@@ -30,12 +41,16 @@ public class ArenaChatManager extends ArenaManager {
 
     private final Map<ArenaGameStatus, TobnetChatHandler> handlerMap = new HashMap<>();
 
+    private final ArenaChatConfiguration configuration;
+
     private ArenaGameManager gameManager;
     private ArenaPlayerManager playerManager;
 
-    public ArenaChatManager(TobnetArena arena) {
+    public ArenaChatManager(TobnetArena arena, ArenaChatConfiguration configuration) {
 
         super(arena);
+
+        this.configuration = configuration;
 
         registerEventHandler(new ArenaChatEventHandler(getArena(), this));
 
@@ -50,19 +65,18 @@ public class ArenaChatManager extends ArenaManager {
 
     @Override
     public void prepareManager() {
-
+        //
     }
 
     @Override
     public void destroyManager() {
-
+        //
     }
 
     @Override
     public void afterArenaPreparationComplete() {
-        // Link to the player manager.
-        playerManager = (ArenaPlayerManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER).orElseThrow(TobnetEngineException::new);
 
+        playerManager = (ArenaPlayerManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER).orElseThrow(TobnetEngineException::new);
         gameManager = (ArenaGameManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.GAME).orElseThrow(TobnetEngineException::new);
     }
 
@@ -73,35 +87,9 @@ public class ArenaChatManager extends ArenaManager {
      * @param chatHandler Tobnet Chat Handler.
      * @author au5tie
      */
-    public void registerChatHandler(ArenaGameStatus gameStatus, TobnetChatHandler chatHandler) {
+    public final void registerChatHandler(ArenaGameStatus gameStatus, TobnetChatHandler chatHandler) {
 
         handlerMap.put(gameStatus, chatHandler);
-    }
-
-    public void sendMessageToAllPlayers(String message) {
-
-        String newMessage = ChatColor.RED + TobnetGamePlugin.chatPrefix + ChatColor.RESET + message;
-
-        ArenaPlayerManager playerManager = ArenaManagerUtils.getPlayerManager(getArena()).get();
-
-        playerManager.getPlayers()
-                .forEach(player -> player.getPlayer().sendMessage(newMessage));
-    }
-
-
-    /**
-     * Handles when a player to player message is initiated. This will route the message to the configured chat handler
-     * for specific game mode handling.
-     *
-     * @param event Player chat event.
-     * @author au5tie
-     */
-    void handlePlayerToPlayerMessage(AsyncPlayerChatEvent event) {
-        // Determine which chat handler we'll use for this message based on the current arena status.
-        TobnetChatHandler chatHandler = getHandlerForCurrentArenaStatus();
-
-        // Hand the event off to the handler to manage.
-        chatHandler.handlePlayerToPlayerMessage(event);
     }
 
     /**
@@ -112,7 +100,7 @@ public class ArenaChatManager extends ArenaManager {
      * @return Tobnet Chat Handler to be used for the current game mode.
      * @author au5tie
      */
-    private TobnetChatHandler getHandlerForCurrentArenaStatus() {
+    protected TobnetChatHandler getHandlerForCurrentArenaStatus() {
         // Obtain the specific handler being used for the current status of the arena.
         TobnetChatHandler chatHandler = handlerMap.get(gameManager.getGameStatus());
 
@@ -127,5 +115,72 @@ public class ArenaChatManager extends ArenaManager {
         }
 
         return chatHandler;
+    }
+
+    /**
+     * Handles when a player to player message is initiated. This will route the message to the configured chat handler
+     * for specific game mode handling.
+     *
+     * @param event Player chat event.
+     * @author au5tie
+     */
+    protected void handlePlayerToPlayerMessage(AsyncPlayerChatEvent event) {
+        // Determine which chat handler we'll use for this message based on the current arena status.
+        TobnetChatHandler chatHandler = getHandlerForCurrentArenaStatus();
+
+        // Hand the event off to the handler to manage.
+        chatHandler.handlePlayerToPlayerMessage(event);
+    }
+
+    /**
+     * Announces when a new player has joined the arena. This will handle notifying players that a new player has joined.
+     *
+     * @author au5tie
+     */
+    protected void announcePlayerJoin(GamePlayer player) {
+
+        if (getPlayerManager().isPlaying(player) && getConfiguration().isAnnouncePlayerJoin()) {
+            // Send a message to all players in the arena notifying them of a player joining.
+            sendMessageToAllPlayers(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.PLAYER_JOIN, player.getUsername()));
+        }
+    }
+
+    /**
+     * Announces when a new player has left the arena. This will handle notifying players that an existing player/team
+     * member has left the arena game.
+     *
+     * @author au5tie
+     */
+    protected void announcePlayerLeave(GamePlayer player) {
+
+        if (getConfiguration().isAnnouncePlayerLeave()) {
+            // Send a message to all players in the arena notifying them of a player leaving.
+            sendMessageToAllPlayers(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.PLAYER_LEAVE, player.getUsername()));
+        }
+    }
+
+    /**
+     * Sends a message to every player in the game.
+     *
+     * @param message Message to send.
+     * @author au5tie
+     */
+    public void sendMessageToAllPlayers(String message) {
+
+        sendMessageToPlayers(playerManager.getPlayers(), message);
+    }
+
+    /**
+     * Sends a message to provided players.
+     *
+     * @param players Players to send to.
+     * @param message Message to send.
+     * @author au5tie
+     */
+    public void sendMessageToPlayers(List<GamePlayer> players, String message) {
+
+        String newMessage = ChatColor.RED + TobnetGamePlugin.chatPrefix + ChatColor.RESET + message;
+
+        players.forEach(player -> player.getPlayer().sendMessage(newMessage));
     }
 }

@@ -1,6 +1,7 @@
 package com.au5tie.sandfall.arena;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.arena.chat.ArenaChatConfiguration;
 import com.au5tie.minecraft.tobnet.game.arena.chat.ArenaChatManager;
 import com.au5tie.minecraft.tobnet.game.arena.chat.handler.IsolationChatHandler;
 import com.au5tie.minecraft.tobnet.game.arena.chat.handler.OpenChatHandler;
@@ -67,7 +68,12 @@ public class SandFallArena extends TobnetArena {
      */
     private void prepareChatManager() {
 
-        ArenaChatManager chatManager = new ArenaChatManager(this);
+        ArenaChatConfiguration configuration = ArenaChatConfiguration.builder()
+                .announcePlayerJoin(true)
+                .announcePlayerLeave(true)
+                .build();
+
+        ArenaChatManager chatManager = new ArenaChatManager(this, configuration);
 
         // Register the chat handlers. This will use chat isolation for all games modes, restrictions apply.
         TobnetChatHandler isolationChatHandler = new IsolationChatHandler(chatManager);
