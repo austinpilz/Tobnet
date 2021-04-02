@@ -11,6 +11,11 @@ public class TobnetLogUtils {
         return log;
     }
 
+    public static void performance(String message) {
+
+        info(message);
+    }
+
     public static void info(String message) {
 
         log.info("[TobnetCore] " + message);

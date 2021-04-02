@@ -130,7 +130,7 @@ public abstract class TobnetArena {
         // Mark that registration is complete which will not allow any further managers to register.
         managerRegistrationComplete = true;
 
-        // Notify all managers we've finished configuring them. This will allow them to dynamically link.
+        // Notify all managers we've finished configuring them. This will allow them to dynamically link to one another.
         getManagers().forEach(ArenaManager::afterArenaPreparationComplete);
     }
 

@@ -14,7 +14,7 @@ import java.util.List;
  *
  * When the arena loads, this manager is populated with all stored locations
  *
- * @author autie
+ * @author au5tie
  */
 public class ArenaLocationManager extends ArenaManager {
 
@@ -33,12 +33,13 @@ public class ArenaLocationManager extends ArenaManager {
 
     @Override
     public void prepareManager() {
-
+        //
     }
 
     @Override
     public void destroyManager() {
 
+        locations.clear();
     }
 
     /**
@@ -60,5 +61,9 @@ public class ArenaLocationManager extends ArenaManager {
 
     public void registerLocation(ArenaLocation location) {
         //TODO When creating new one, will need to call to store it.
+    }
+
+    public void removeLocation(ArenaLocation location) {
+        // TODO When removing a location from arena, also need to delete from storage DB.
     }
 }

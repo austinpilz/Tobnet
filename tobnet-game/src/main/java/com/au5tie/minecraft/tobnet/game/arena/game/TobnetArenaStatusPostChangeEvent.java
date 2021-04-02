@@ -8,6 +8,7 @@ import lombok.Getter;
 /**
  * The TobnetArenaStatusChangeEvent represents once the arena's game status has been successfully transitioned. The event
  * will only be published after the status has been successfully changed.
+ *
  * @author au5tie
  */
 @Getter
