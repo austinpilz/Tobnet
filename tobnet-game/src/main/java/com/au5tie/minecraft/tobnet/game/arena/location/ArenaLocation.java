@@ -1,17 +1,17 @@
 package com.au5tie.minecraft.tobnet.game.arena.location;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
+import org.json.simple.JSONObject;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Data
 public class ArenaLocation {
 
@@ -19,5 +19,41 @@ public class ArenaLocation {
     private String name;
     private String type;
     private Location location;
-    private Map<String, String> metadata;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private final Map<String, String> metadata;
+
+    public ArenaLocation() {
+
+        this(UUID.randomUUID().toString());
+    }
+
+    public ArenaLocation(String name) {
+
+        this.name = name;
+
+        this.metadata = new HashMap<>();
+    }
+
+    /**
+     * Returns the location's metadata as a JSON object.
+     *
+     * @return Metadata in JSON format.
+     * @author au5tie
+     */
+    public JSONObject getMetadataAsJson() {
+
+        return new JSONObject(metadata);
+    }
+
+    public void addMetadata(String key, String value) {
+
+        metadata.put(key, value);
+    }
+
+    public void removeMetadata(String key) {
+
+        metadata.remove(key);
+    }
 }

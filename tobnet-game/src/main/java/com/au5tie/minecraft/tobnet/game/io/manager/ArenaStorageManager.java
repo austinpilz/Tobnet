@@ -121,6 +121,7 @@ public class ArenaStorageManager extends StorageManager {
      * @author au5tie
      */
     private TobnetArena createArena(String arenaName, String className) throws Exception {
+
         Class arenaClass = Class.forName(className);
 
         // Obtain the constructor defined in the arena contract.

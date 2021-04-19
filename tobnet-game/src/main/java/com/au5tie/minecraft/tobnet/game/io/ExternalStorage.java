@@ -158,7 +158,7 @@ public class ExternalStorage {
         // Have all of the managers load data into memory.
         loadData();
 
-        // TODO Publish event out that we've finished loading data for each arena.
+        // Publish event out that we've finished loading data for each arena. This alerts arena managers to pull data.
         TobnetEventPublisher.publishEvent(new TobnetExternalStorageLoadCompleteEvent());
     }
 
@@ -180,7 +180,7 @@ public class ExternalStorage {
         // Have all of the other managers load their data into memory now that the arenas are in place.
         storageManagers.values().stream()
                 .filter(manager -> !StorageManagerType.ARENA.equals(manager.getType()))
-                .forEach(StorageManager::loadData);
+                .forEach(StorageManager::performDataLoad);
     }
 
     /**

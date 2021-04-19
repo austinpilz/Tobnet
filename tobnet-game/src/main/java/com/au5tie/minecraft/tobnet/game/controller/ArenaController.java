@@ -43,8 +43,6 @@ public class ArenaController {
 
         this.arenas.add(arena);
 
-        //TODO - Register listeners and whatever else needs to be done?
-
         TobnetLogUtils.info("Arena Controller >> addArena() >> Registered arena " + arena.getName());
     }
 

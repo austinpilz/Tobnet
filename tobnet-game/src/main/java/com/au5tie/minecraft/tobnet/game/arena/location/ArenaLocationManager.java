@@ -55,8 +55,16 @@ public class ArenaLocationManager extends ArenaManager {
         return Collections.unmodifiableList(locations);
     }
 
+    /**
+     * Loads the location from storage into manager memory. This specifically bypasses saving the location to storage,
+     * so it should only be used when performing loads.
+     *
+     * @param location Arena Location.
+     * @author au5tie
+     */
     public void loadLocation(ArenaLocation location) {
-        //TODO Is when loading from DB.
+
+        locations.add(location);
     }
 
     public void registerLocation(ArenaLocation location) {
