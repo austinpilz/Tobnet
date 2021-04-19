@@ -1,7 +1,7 @@
-name: FridayThe14th
-main: com.au5tie.f13.FridayThe13thPlugin
+name: Sandfall
+main: com.au5tie.sandfall.SandFallPlugin
 version: ${project.version}
-description: Friday the 13th
+description: SandFall
 author: Au5tie
 website: http://f13mc.com
 load: POSTWORLD

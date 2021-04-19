@@ -6,4 +6,7 @@ public class MessageConstants {
     public static final String COUNTDOWN_GAME_BEGINS = "countdown_gameBegins";
     public static final String COUNTDOWN_DISPLAY_TITLE = "countdown_display_title";
 
+    // Player.
+    public static final String PLAYER_JOIN = "player_join";
+    public static final String PLAYER_LEAVE = "player_leave";
 }

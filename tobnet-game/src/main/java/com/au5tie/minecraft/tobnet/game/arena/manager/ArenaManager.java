@@ -1,7 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.arena.manager;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -59,6 +59,16 @@ public abstract class ArenaManager {
      * @author au5tie
      */
     public void afterArenaPreparationComplete() {
+        // Nothing by default.
+    }
+
+    /**
+     * Notifies the manager that all of the arena's storage has been loaded into the various storage managers and that
+     * this manager can safely reference/load those objects.
+     *
+     * @author au5tie
+     */
+    public void afterArenaStorageLoadComplete() {
         // Nothing by default.
     }
 

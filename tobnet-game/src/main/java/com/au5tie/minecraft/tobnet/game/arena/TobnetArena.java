@@ -3,7 +3,7 @@ package com.au5tie.minecraft.tobnet.game.arena;
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.convert.BaseArenaConverter;
 import com.au5tie.minecraft.tobnet.game.arena.convert.TobnetArenaConverter;
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
@@ -130,7 +130,7 @@ public abstract class TobnetArena {
         // Mark that registration is complete which will not allow any further managers to register.
         managerRegistrationComplete = true;
 
-        // Notify all managers we've finished configuring them. This will allow them to dynamically link.
+        // Notify all managers we've finished configuring them. This will allow them to dynamically link to one another.
         getManagers().forEach(ArenaManager::afterArenaPreparationComplete);
     }
 
@@ -145,7 +145,7 @@ public abstract class TobnetArena {
      * @author au5tie
      */
     private void registerManagerListeners() {
-        // Compile all of the handlers registered by all of the anagers.
+        // Compile all of the handlers registered by all of the managers.
         List<ArenaEventHandler> handlers = new ArrayList<>();
         getManagers().forEach(manager -> handlers.addAll(manager.getEventHandlers()));
 

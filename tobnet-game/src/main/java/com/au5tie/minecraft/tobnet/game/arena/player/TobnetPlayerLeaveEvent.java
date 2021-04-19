@@ -7,6 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * The Player Leave Event represents a player leaving the arena. The event itself does not specify the terms on which the
+ * player left, whether they were kicked, quit, the game ended, etc.
+ *
+ * @author au5tie
+ */
 @AllArgsConstructor
 @Builder
 @Getter

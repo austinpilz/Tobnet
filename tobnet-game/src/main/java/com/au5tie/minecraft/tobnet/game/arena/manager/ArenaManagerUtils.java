@@ -1,7 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.arena.manager;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.arena.chest.ArenaChestManager;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameManager;
 import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
 
@@ -37,23 +36,6 @@ public class ArenaManagerUtils {
                 .map(CustomArenaManager.class::cast)
                 .filter(manager -> manager.getCustomType().equalsIgnoreCase(customType))
                 .findFirst();
-    }
-
-    /**
-     * Obtains the {@link ArenaChestManager} within the supplied {@link TobnetArena}.
-     * @param arena Arena.
-     * @return Arena Chest Manager, if registered.
-     * @author au5tie
-     */
-    public static Optional<ArenaChestManager> getChestManager(TobnetArena arena) {
-
-        Optional<ArenaManager> playerManager = getManagerOfType(arena, ArenaManagerType.CHEST);
-
-        if (playerManager.isPresent()) {
-            return Optional.of((ArenaChestManager) playerManager.get());
-        } else {
-            return Optional.empty();
-        }
     }
 
     /**

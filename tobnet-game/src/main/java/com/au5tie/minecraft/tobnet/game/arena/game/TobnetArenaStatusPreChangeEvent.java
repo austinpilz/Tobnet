@@ -8,6 +8,7 @@ import lombok.Getter;
 /**
  * The TobnetArenaStatusChangeEvent represents the intent of the arena's game status to be transitioned to a different
  * state.
+ *
  * @author au5tie
  */
 @Getter

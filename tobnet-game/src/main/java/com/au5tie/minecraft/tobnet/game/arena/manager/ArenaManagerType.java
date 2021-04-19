@@ -6,6 +6,7 @@ public enum ArenaManagerType {
     COUNTDOWN,
     CUSTOM,
     GAME,
+    LOCATION,
     PLAYER,
     PLAYER_DISPLAY,
     SIGN,

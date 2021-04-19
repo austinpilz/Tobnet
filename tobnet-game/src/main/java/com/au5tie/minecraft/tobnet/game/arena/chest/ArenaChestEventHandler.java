@@ -1,7 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.arena.chest;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.arena.handler.ArenaEventHandler;
+import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Location;

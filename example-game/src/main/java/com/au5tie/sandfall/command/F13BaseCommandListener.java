@@ -1,4 +1,4 @@
-package com.au5tie.f13.command;
+package com.au5tie.sandfall.command;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
@@ -37,6 +37,18 @@ public class F13BaseCommandListener extends CommandListener {
 
             } else {
                 TobnetChatUtils.sendPlayerMessage((Player) sender, "Arena " + arenaName + " does not exist.");
+            }
+        } else if (args.length == 1 && args[0].equalsIgnoreCase("quit")) {
+
+            Optional<TobnetArena> arena = TobnetGamePlugin.getArenaController().getPlayerArena(((Player) sender).getUniqueId().toString());
+
+            if (arena.isPresent()) {
+
+                ArenaPlayerManager playerManager = (ArenaPlayerManager)arena.get().getManager(ArenaManagerType.PLAYER).get();
+
+                playerManager.leaveGame(playerManager.getGamePlayer(((Player) sender).getUniqueId().toString()));
+            } else {
+                TobnetChatUtils.sendPlayerMessage((Player) sender, "You're not currently playing.");
             }
         }
 

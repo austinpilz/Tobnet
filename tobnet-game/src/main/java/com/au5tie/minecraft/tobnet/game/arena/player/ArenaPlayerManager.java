@@ -7,6 +7,7 @@ import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 
 import java.util.ArrayList;
@@ -16,15 +17,13 @@ import java.util.Map;
 
 public class ArenaPlayerManager extends ArenaManager {
 
-    private final TobnetArena arena;
+    private ArenaGameManager gameManager;
 
     private Map<String, GamePlayer> players;
 
     public ArenaPlayerManager(TobnetArena arena) {
 
         super(arena);
-
-        this.arena = arena;
 
         this.players = new HashMap<>();
     }
@@ -46,6 +45,24 @@ public class ArenaPlayerManager extends ArenaManager {
         //
     }
 
+    @Override
+    public void afterArenaPreparationComplete() {
+
+        gameManager = (ArenaGameManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.GAME).orElseThrow(TobnetEngineException::new);
+    }
+
+    /**
+     * Determines if the player is currently playing.
+     *
+     * @param player Game Player.
+     * @return If the player is playing.
+     * @author au5tie.
+     */
+    public final boolean isPlaying(GamePlayer player) {
+
+        return isPlaying(player.getUuid());
+    }
+
     /**
      * Determines if the player is currently playing.
      *
@@ -54,6 +71,7 @@ public class ArenaPlayerManager extends ArenaManager {
      * @author au5tie.
      */
     public final boolean isPlaying(String uuid) {
+
         return players.containsKey(uuid);
     }
 
@@ -62,6 +80,7 @@ public class ArenaPlayerManager extends ArenaManager {
      * @author au5tie
      */
     public final int getNumberOfPlayers() {
+
         return players.size();
     }
 
@@ -105,14 +124,8 @@ public class ArenaPlayerManager extends ArenaManager {
             TobnetEventPublisher.publishEvent(preJoinEvent);
 
             if (!preJoinEvent.isCancelled()) {
-                // Store the player in the manager as them officially joining.
-                this.players.put(player.getUuid(), player);
-
-                // Perform player join.
+                // Join the player into the game.
                 performPlayerJoin(player);
-
-                // Publish event out that the player has joined the game.
-                TobnetEventPublisher.publishEvent(new TobnetPlayerPostJoinEvent(getArena(), player));
             } else {
                 // The pre-join event was cancelled, thus we cannot admit this player to the game.
                 throw new ArenaStatusNotJoinableException("Player pre-join event was cancelled.");
@@ -124,14 +137,44 @@ public class ArenaPlayerManager extends ArenaManager {
     }
 
     /**
+     * Performs the joining of the player into the arena game.
+     *
+     * @param player Player.
+     * @author au5tie
+     */
+    private void performPlayerJoin(GamePlayer player) {
+        // Store the player in the manager as them officially joining.
+        this.players.put(player.getUuid(), player);
+
+        // Allow overriding player manager to perform custom operations.
+        onPlayerJoin(player);
+
+        // Publish event out that the player has joined the game.
+        TobnetEventPublisher.publishEvent(new TobnetPlayerPostJoinEvent(getArena(), player));
+    }
+
+    /**
      * Joins the player into the arena. This will prepare the player, add them into the arena game, and publish events
      * out notifying of the join.
      *
      * @param player Player.
      * @author au5tie
      */
-    protected void performPlayerJoin(GamePlayer player) {
+    protected void onPlayerJoin(GamePlayer player) {
 
+        // TODO NEXT to this. Figure out what to do to players when they join.
+
+        // ON PLAYER JOIN
+            // IF WAITING/EMPTY, announce arrival to all players.
+
+        // PLAYER ROLES
+            // Player status (Alive, Dead, Spectator)
+            // Player role (custom for jason, counselor, spectator, etc.)
+
+        // LOCATIONS
+            // Store all locations via events.
+            // Load locations to generate Location Manager.
+            // Then each specialized manager will load from that generalized manager.
 
     }
 
@@ -156,15 +199,32 @@ public class ArenaPlayerManager extends ArenaManager {
      * @param player Player.
      * @author au5tie
      */
-    protected void performPlayerLeave(GamePlayer player) {
+    private void performPlayerLeave(GamePlayer player) {
         // Notify listeners of player leaving.
         TobnetEventPublisher.publishEvent(new TobnetPlayerLeaveEvent(getArena(), player));
 
         // Hide & destroy all display components for the user. This cleans up their display and all like references.
         player.getDisplayManager().destroyComponents();
 
+        // Stop all sounds.
+
+        // Remove all potion effects.
+
+        // Teleport out.
+
+        // Allow overriding player manager to perform custom operations.
+        onPlayerLeave(player);
+
         // Remove player from manager.
         players.remove(player.getUuid());
+    }
+
+    protected void onPlayerLeave(GamePlayer player) {
+        //
+    }
+
+    protected void onPlayerDeath(GamePlayer player) {
+        //
     }
 
     /**

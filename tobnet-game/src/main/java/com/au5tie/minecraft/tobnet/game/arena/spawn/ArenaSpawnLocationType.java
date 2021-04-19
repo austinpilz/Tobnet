@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game.arena.location;
+package com.au5tie.minecraft.tobnet.game.arena.spawn;
 
 public enum ArenaSpawnLocationType {
     SURVIVOR_ONLY,

@@ -3,9 +3,7 @@ package com.au5tie.minecraft.tobnet.game;
 import com.au5tie.minecraft.tobnet.game.admin.TobnetArenaCommandListener;
 import com.au5tie.minecraft.tobnet.game.command.CommandController;
 import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
-import com.au5tie.minecraft.tobnet.game.io.ArenaStorageManager;
 import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
-import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
 import com.au5tie.minecraft.tobnet.game.message.MessageController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
@@ -34,6 +32,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     /**
      * Performs implementing plugin on load tasks. This allows for the implementing plugin to perform it's own onEnable
      * actions in addition to that of the core engine.
+     *
      * @author au5tie
      */
     public abstract void enablePlugin();
@@ -41,6 +40,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     /**
      * Performs implementing plugin on unload tasks. This allows for the implementing plugin to perform it's own onDisable
      * actions in addition to that of the core engine.
+     *
      * @author au5tie
      */
     public abstract void disablePlugin();
@@ -57,16 +57,12 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
         this.commandController = new CommandController(this);
         this.arenaController = new ArenaController();
 
-        // External Storage Prep & Load.
+        // External Storage - Prepare and load data from external data source.
         this.externalStorage = new ExternalStorage();
         externalStorage.onStartup();
 
         // Allow the implementing plugin to perform configuration of it's own.
         enablePlugin();
-
-        //TODO TEMPORARY??? Until I figure out how I want arenas to be loaded
-        ArenaStorageManager arenaStorageManager = (ArenaStorageManager)externalStorage.getManager(StorageManagerType.ARENA);
-        arenaStorageManager.loadArenas();
 
         // Register Tobnet Engine global admin commands.
         getCommandController().registerCommandLister(new TobnetArenaCommandListener());

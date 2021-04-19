@@ -1,7 +1,10 @@
-package com.au5tie.minecraft.tobnet.game.io;
+package com.au5tie.minecraft.tobnet.game.io.manager;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
+import com.au5tie.minecraft.tobnet.game.io.StorageManager;
+import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,7 +13,10 @@ import java.lang.reflect.Constructor;
 import java.sql.*;
 
 /**
- * TODO! EXplain reflections.
+ * The Arena Storage Manager is responsible for the storage and retrieval of the {@link TobnetArena} with the underlying
+ * data storage.
+ *
+ * @author au5tie
  */
 public class ArenaStorageManager extends StorageManager {
 
@@ -20,11 +26,13 @@ public class ArenaStorageManager extends StorageManager {
 
     @Override
     public void prepareTables() {
+
         prepareArenaTable();
     }
 
     /**
      * Prepares the Arena table.
+     *
      * @author au5tie.
      */
     protected void prepareArenaTable() {
@@ -44,10 +52,11 @@ public class ArenaStorageManager extends StorageManager {
     }
 
     /**
-     * Load arenas into arena controller memory.
+     * Load arenas from the data source and registers them with the game for use/play.
+     *
      * @author au5tie.
      */
-    public void loadArenas() {
+    protected void loadData() {
         try {
             Connection connection = getExternalStorage().getConnection();
 
@@ -56,7 +65,7 @@ public class ArenaStorageManager extends StorageManager {
             // Execute the query.
             ResultSet result = preparedStatement.executeQuery();
 
-            // Count the number of arena's we've loaded.
+            // Count the number of arenas we've loaded.
             int count = 0;
 
             while (result.next()) {
@@ -77,6 +86,7 @@ public class ArenaStorageManager extends StorageManager {
     /**
      * Converts the database representation of the Arena into the Arena (in it's subclass implementation). This will also
      * register the arena with the Arena Controller to make it accessible to the entire plugin.
+     *
      * @param result Arena ResultSet.
      * @throws SQLException SQL Exception while loading arena from the database.
      * @author au5tie.
@@ -92,6 +102,9 @@ public class ArenaStorageManager extends StorageManager {
         Location locationTwo = new Location(Bukkit.getWorld(result.getString("World")), result.getDouble("B2X"),result.getDouble("B2Y"),result.getDouble("B2Z"));
         arena.setBoundaryTwo(locationTwo);
 
+        // Storage Load.
+        // Items like locations, objects, etc. are all loaded for each registered arena after arenas are done loading.
+
         // Register the arena with the Arena Controller.
         TobnetGamePlugin.getArenaController().registerArena(arena);
     }
@@ -100,13 +113,15 @@ public class ArenaStorageManager extends StorageManager {
      * Creates the arena of the implementing plugin's subclass of {@link TobnetArena}. The arenas are stored in the data
      * structure with their class name. Since we need to load the arenas in the Tobnet engine but the actual Arena class
      * type they'll be using is defined in the implementing plugin, we instantiate it via reflection.
+     *
      * @param arenaName Arena Name.
-     * @param className Implemeting Arena Class Name.
+     * @param className Implementing Arena Class Name.
      * @return Arena.
      * @throws Exception Exception while attempting to instantiate arena via reflection.
-     * @author Austin Pilz n0286596
+     * @author au5tie
      */
     private TobnetArena createArena(String arenaName, String className) throws Exception {
+
         Class arenaClass = Class.forName(className);
 
         // Obtain the constructor defined in the arena contract.

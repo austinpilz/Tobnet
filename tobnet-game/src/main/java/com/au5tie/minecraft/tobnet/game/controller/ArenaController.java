@@ -7,6 +7,7 @@ import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,16 +24,18 @@ public class ArenaController {
 
     /**
      * Returns list of all registered {@link TobnetArena}.
+     *
      * @return Registered Arenas.
      * @author au5tie
      */
     public List<TobnetArena> getArenas() {
 
-        return new ArrayList<>(arenas);
+        return Collections.unmodifiableList(arenas);
     }
 
     /**
      * Adds {@link TobnetArena} to the controller.
+     *
      * @param arena Arena.
      * @author au5tie
      */
@@ -40,13 +43,12 @@ public class ArenaController {
 
         this.arenas.add(arena);
 
-        //TODO - Register listeners and whatever else needs to be done?
-
         TobnetLogUtils.info("Arena Controller >> addArena() >> Registered arena " + arena.getName());
     }
 
     /**
      * Removes {@link TobnetArena} from the controller.
+     *
      * @param arena Arena.
      * @author au5tie
      */
@@ -57,6 +59,7 @@ public class ArenaController {
 
     /**
      * Returns the {@link TobnetArena} that encompasses the supplied {@link Location}.
+     *
      * @param location Location.
      * @return Arena that contains location.
      * @author au5tie
@@ -88,6 +91,7 @@ public class ArenaController {
 
     /**
      * Obtains an {@link TobnetArena} by the supplied arena name.
+     *
      * @param arenaName Arena Name.
      * @return Arena, if one exists.
      * @author au5tie
@@ -101,6 +105,7 @@ public class ArenaController {
 
     /**
      * Returns the {@link ArenaSetupSessionController}.
+     *
      * @return Arena Setup Session Controller.
      * @author au5tie
      */
