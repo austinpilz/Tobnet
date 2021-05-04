@@ -141,7 +141,6 @@ public class LocationStorageManager extends StorageManager {
     private void loadLocation(ResultSet result) {
 
         try {
-
             // Attempt to locate the arena to which this location belongs.
             Optional<TobnetArena> arena = TobnetGamePlugin.getArenaController().getArenaByName(result.getString(LOCATION_COLUMN_ARENA));
 

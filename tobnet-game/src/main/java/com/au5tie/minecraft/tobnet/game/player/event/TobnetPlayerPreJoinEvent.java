@@ -1,6 +1,7 @@
-package com.au5tie.minecraft.tobnet.game.event;
+package com.au5tie.minecraft.tobnet.game.player.event;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
+import com.au5tie.minecraft.tobnet.game.event.TobnetCustomCancellableEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;

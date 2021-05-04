@@ -45,7 +45,7 @@ public class ArenaSpawnLocationManager extends ArenaManager {
 
     @Override
     public void destroyManager() {
-
+        //
     }
 
     @Override
@@ -60,6 +60,11 @@ public class ArenaSpawnLocationManager extends ArenaManager {
         loadLocations();
     }
 
+    /**
+     * Loads all of the spawn locations
+     *
+     *
+     */
     private void loadLocations() {
         // Obtain just the spawn locations from the location storage manager.
         List<ArenaLocation> spawnLocations = ArenaLocationUtils.filterLocationsByType(SPAWN_LOCATION_TYPE, locationManager.getLocations());
