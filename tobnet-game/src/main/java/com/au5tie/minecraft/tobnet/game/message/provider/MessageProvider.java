@@ -1,5 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.message.provider;
 
+import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
+
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
  * a collection of messages and their translations into the provider specific language.
  *
  * If you'd like to create your own provider with custom messages and/or translations of existing messages, extend this
- * class and register it with the {@link com.au5tie.minecraft.tobnet.game.message.MessageController}. You should pay special
+ * class and register it with the {@link TobnetMessageController}. You should pay special
  * care to ensure your custom provider includes a translation for every message that the default provider includes. If
  * your provider misses a message that the game tries to pull from your provider, the controller will fall back to obtaining
  * it from the default provider.

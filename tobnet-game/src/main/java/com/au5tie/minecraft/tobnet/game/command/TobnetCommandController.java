@@ -1,10 +1,13 @@
 package com.au5tie.minecraft.tobnet.game.command;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
+import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,22 +18,17 @@ import java.util.Map;
  * The Tobnet Command Controller acts as the interface layer between the server API (Spigot) and the implementing game code.
  * CommandListeners will be registered with the Command Controller which will handle the routing of command events to
  * interested listeners.
+ *
  * @author au5tie
  */
-public class CommandController implements CommandExecutor {
+public final class TobnetCommandController implements CommandExecutor, TobnetController {
 
-    private final JavaPlugin plugin;
-    private Map<String, List<CommandListener>> commands;
-
-    public CommandController(JavaPlugin plugin) {
-
-        this.plugin = plugin;
-        this.commands = new HashMap<>();
-    }
+    private Map<String, List<CommandListener>> commands = new HashMap<>();
 
     /**
      * Registers the {@link CommandListener}'s supported commands. This will register each of the interested commands
      * to the listener itself.
+     *
      * @param listener Command Listener.
      * @author au5tie
      */
@@ -43,11 +41,19 @@ public class CommandController implements CommandExecutor {
      * Registers the command with the {@link CommandListener}. This will register the command with Bukkit so that the server
      * will route the command to this controller. This will also register the listener as interested in the command with
      * this controller which will ensure the command gets routed to that listener.
+     *
      * @param listener Command Listener.
      * @param command Command.
      * @author au5tie
      */
     private final void registerCommand(CommandListener listener, String command) {
+
+        if (StringUtils.isBlank(command)) {
+            // The command attempting to be registered is blank.
+            throw new TobnetEngineException(listener.getClass().getSimpleName() +
+                    " listener attempted to register a null command.");
+        }
+
         // Convert the command to lower case.
         command = command.toLowerCase();
 
@@ -71,6 +77,7 @@ public class CommandController implements CommandExecutor {
 
     /**
      * Determines of the provided command is registered to one or more {@link CommandListener}s.
+     *
      * @param command Command.
      * @return If the command is registered to one or more Command Listeners.
      * @author au5tie

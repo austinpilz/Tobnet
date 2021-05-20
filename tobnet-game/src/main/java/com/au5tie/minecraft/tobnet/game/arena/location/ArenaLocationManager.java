@@ -56,6 +56,17 @@ public class ArenaLocationManager extends ArenaManager {
     }
 
     /**
+     * Returns the number of registered locations.
+     *
+     * @return Number of registered locations.
+     * @author au5tie
+     */
+    public final int getNumberLocations() {
+
+        return locations.size();
+    }
+
+    /**
      * Loads the location from storage into manager memory. This specifically bypasses saving the location to storage,
      * so it should only be used when performing loads.
      *

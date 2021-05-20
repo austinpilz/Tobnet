@@ -6,13 +6,14 @@ import com.au5tie.minecraft.tobnet.game.arena.location.ArenaLocation;
 import com.au5tie.minecraft.tobnet.game.arena.location.ArenaLocationManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
-import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
-import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineMissingManagerException;
 import com.au5tie.minecraft.tobnet.game.io.StorageManager;
 import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
+import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
@@ -45,8 +46,8 @@ public class LocationStorageManager extends StorageManager {
     private static final String LOCATION_COLUMN_PITCH = "Pitch";
     private static final String LOCATION_COLUMN_YAQ = "Yaw";
 
-    public LocationStorageManager(ExternalStorage externalStorage) {
-        super(StorageManagerType.LOCATION, externalStorage);
+    public LocationStorageManager(TobnetStorageController tobnetStorageController) {
+        super(StorageManagerType.LOCATION, tobnetStorageController);
     }
 
     @Override
@@ -58,11 +59,11 @@ public class LocationStorageManager extends StorageManager {
     /**
      * Prepares the Location table.
      *
-     * @author au5tie.
+     * @author au5tie
      */
     protected void prepareLocationTable() {
         // Establish our database connection.
-        Connection connection = getExternalStorage().getConnection();
+        Connection connection = getTobnetStorageController().getConnection();
 
         try {
             Statement statement = connection.createStatement();
@@ -102,9 +103,9 @@ public class LocationStorageManager extends StorageManager {
     private void loadLocationsForArena(TobnetArena arena) {
 
         try {
-            Connection connection = getExternalStorage().getConnection();
+            Connection connection = getTobnetStorageController().getConnection();
 
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Name`, `Class`, `Arena`, `Type`, `X`, `Y`, `Z`, `World`, `Yaw`, `Pitch` FROM `location` WHERE `Arena` = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Name`, `Class`, `Arena`, `Type`, `X`, `Y`, `Z`, `World`, `Yaw`, `Pitch`, `Metadata` FROM `location` WHERE `Arena` = ?");
 
             preparedStatement.setString(1, arena.getName() + "");
 
@@ -145,32 +146,25 @@ public class LocationStorageManager extends StorageManager {
             Optional<TobnetArena> arena = TobnetGamePlugin.getArenaController().getArenaByName(result.getString(LOCATION_COLUMN_ARENA));
 
             if (!arena.isPresent()) {
-                // The arena this location belongs do is not loaded.
+                // The arena this location belongs to is not loaded.
+                TobnetLogUtils.warn("LocationStorageManager >> loadLocation() >> Found location for non-existent Arena " + result.getString(LOCATION_COLUMN_ARENA));
                 return;
             }
 
-            // Create the location via reflection.
-            ArenaLocation arenaLocation = createLocation(result.getString(LOCATION_COLUMN_NAME), result.getString(LOCATION_COLUMN_CLASS));
-
-            // Populate additional fields.
-            arenaLocation.setType(result.getString(LOCATION_COLUMN_TYPE));
-
-            // Obtain the bucket location.
+            // Obtain the Bukkit location.
             Location serverLocation = new Location(Bukkit.getWorld(result.getString(LOCATION_COLUMN_WORLD)), result.getDouble(LOCATION_COLUMN_X),
                     result.getDouble(LOCATION_COLUMN_Y), result.getDouble(LOCATION_COLUMN_Z), result.getFloat(LOCATION_COLUMN_YAQ),
                     result.getFloat(LOCATION_COLUMN_PITCH));
 
-            arenaLocation.setLocation(serverLocation);
+            // Create the location via reflection.
+            ArenaLocation arenaLocation = createLocation(result.getString(LOCATION_COLUMN_CLASS), arena.get(), result.getString(LOCATION_COLUMN_NAME), result.getString(LOCATION_COLUMN_TYPE), serverLocation);
 
             // Metadata conversion.
             Map<String, String> metadata = metadataFromJson(result.getString(LOCATION_COLUMN_METADATA));
-            metadata.forEach((key,value) -> arenaLocation.addMetadata(key, value));
-
-            // Link the arena.
-            arenaLocation.setArena(arena.get());
+            metadata.forEach((key,value) -> arenaLocation.addMetadataElement(key, value));
 
             // Register the finalized location with the arena's location manager.
-            ArenaLocationManager locationManager = (ArenaLocationManager) ArenaManagerUtils.getManagerOfType(arena.get(), ArenaManagerType.LOCATION).orElseThrow(TobnetEngineException::new);
+            ArenaLocationManager locationManager = (ArenaLocationManager) ArenaManagerUtils.getManagerOfType(arena.get(), ArenaManagerType.LOCATION).orElseThrow(TobnetEngineMissingManagerException::new);
             locationManager.loadLocation(arenaLocation);
         } catch (Exception exception) {
             // We encountered some error while loading this location.
@@ -188,7 +182,11 @@ public class LocationStorageManager extends StorageManager {
      */
     private Map<String, String> metadataFromJson(String rawMetadata) throws Exception {
 
-        return new ObjectMapper().readValue(rawMetadata, HashMap.class);
+        if (StringUtils.isNotBlank(rawMetadata)) {
+            return new ObjectMapper().readValue(rawMetadata, HashMap.class);
+        } else {
+            return new HashMap<>();
+        }
     }
 
     /**
@@ -214,15 +212,15 @@ public class LocationStorageManager extends StorageManager {
      * @throws Exception Exception during location creation.
      * @author au5tie
      */
-    private ArenaLocation createLocation(String name, String className) throws Exception {
+    private ArenaLocation createLocation(String className, TobnetArena arena, String name, String type, Location location) throws Exception {
 
-        Class arenaClass = Class.forName(className);
+        Class locationClass = Class.forName(className);
 
         // Obtain the constructor defined in the location contract.
-        Class[] types = {String.class};
-        Constructor constructor = arenaClass.getConstructor(types);
+        Class[] types = {TobnetArena.class, String.class, String.class, Location.class};
+        Constructor constructor = locationClass.getConstructor(types);
 
-        Object[] parameters = {name};
+        Object[] parameters = {arena, name, type, location};
         return (ArenaLocation) constructor.newInstance(parameters);
     }
 }

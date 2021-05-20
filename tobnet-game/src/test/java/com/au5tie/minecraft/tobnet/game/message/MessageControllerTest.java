@@ -13,12 +13,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @RunWith(JUnitPlatform.class)
 class MessageControllerTest {
 
-    private MessageController controller;
+    private TobnetMessageController controller;
 
     @BeforeEach
     void setup() {
 
-        controller = new MessageController();
+        controller = new TobnetMessageController();
     }
 
     @DisplayName("Message Retrieve - Found")

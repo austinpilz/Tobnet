@@ -61,9 +61,10 @@ public class ArenaSpawnLocationManager extends ArenaManager {
     }
 
     /**
-     * Loads all of the spawn locations
+     * Loads all of the spawn points for the arena. This will pull just the Spawn type locations from the overall arena
+     * location manager.
      *
-     *
+     * @author au5tie
      */
     private void loadLocations() {
         // Obtain just the spawn locations from the location storage manager.
@@ -72,6 +73,12 @@ public class ArenaSpawnLocationManager extends ArenaManager {
         locations.addAll(spawnLocations);
     }
 
+    /**
+     * Returns all of the registered spawn points in the arena.
+     *
+     * @return Spawn points.
+     * @author au5tie
+     */
     public List<ArenaLocation> getSpawnLocations() {
 
         return Collections.unmodifiableList(locations);

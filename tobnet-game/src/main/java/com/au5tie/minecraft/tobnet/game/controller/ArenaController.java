@@ -4,6 +4,7 @@ import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.arena.setup.ArenaSetupSessionController;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.google.inject.Singleton;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Singleton
 public class ArenaController {
 
     private final List<TobnetArena> arenas;

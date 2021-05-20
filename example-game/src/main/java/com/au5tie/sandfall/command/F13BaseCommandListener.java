@@ -4,7 +4,7 @@ import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
-import com.au5tie.minecraft.tobnet.game.command.CommandListener;
+import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import org.bukkit.command.Command;

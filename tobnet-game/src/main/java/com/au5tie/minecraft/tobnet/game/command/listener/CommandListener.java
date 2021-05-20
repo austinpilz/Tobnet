@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game.command;
+package com.au5tie.minecraft.tobnet.game.command.listener;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -31,6 +31,7 @@ public abstract class CommandListener {
 
     /**
      * Retrieves all of the top level commands that the listener is interested in subscribing to.
+     *
      * @return Subscribed commands.
      * @author au5tie
      */
@@ -41,6 +42,7 @@ public abstract class CommandListener {
 
     /**
      * Registers a command which the listener is interested in subscribing to.
+     *
      * @param command Top Level Command.
      * @author au5tie
      */
@@ -52,12 +54,14 @@ public abstract class CommandListener {
     /**
      * Registers the commands which the implementing listener wants to subscribe to. All top level commands which the listener
      * wishes to subscribe to must be populated when this is called.
+     *
      * @author au5tie
      */
     protected abstract void registerCommands();
 
     /**
      * Triggered when a command is executed which the listener is subscribed to.
+     *
      * @param sender Command Sender.
      * @param command Command.
      * @param label Label.

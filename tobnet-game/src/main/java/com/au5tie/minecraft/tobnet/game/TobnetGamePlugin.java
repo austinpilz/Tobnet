@@ -1,27 +1,37 @@
 package com.au5tie.minecraft.tobnet.game;
 
-import com.au5tie.minecraft.tobnet.game.admin.TobnetArenaCommandListener;
-import com.au5tie.minecraft.tobnet.game.command.CommandController;
+import com.au5tie.minecraft.tobnet.game.command.TobnetCommandController;
+import com.au5tie.minecraft.tobnet.game.command.listener.TobnetBaseArenaCommandListener;
 import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
-import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
-import com.au5tie.minecraft.tobnet.game.message.MessageController;
+import com.au5tie.minecraft.tobnet.game.guice.TobnetPluginInjector;
+import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
+import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class TobnetGamePlugin extends JavaPlugin {
+public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
     public static TobnetGamePlugin instance;
 
-    private static MessageController messageController;
-    private static CommandController commandController;
     private static ArenaController arenaController;
-
-    private static ExternalStorage externalStorage;
+    private static TobnetStorageController storageController;
+    private static TobnetCommandController commandController;
+    private static TobnetMessageController messageController;
 
     public static String chatPrefix = "[Tobnet] ";
+
+    // Guice.
+    private Injector injector;
+    private final List<Module> modules = new ArrayList<>();
 
     public TobnetGamePlugin() {
 
@@ -52,24 +62,31 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
         LocalDateTime pluginLoadStart = LocalDateTime.now();
         TobnetLogUtils.getLogger().info("Engine loading begin.");
 
-        // Setup Controllers.
-        this.messageController = new MessageController();
-        this.commandController = new CommandController(this);
-        this.arenaController = new ArenaController();
+        // Guice.
+        this.injector = Guice.createInjector(new TobnetPluginInjector(this));
+        this.injector.injectMembers(this);
+        this.modules.forEach(this.injector::injectMembers);
+
+        // Setup Tobnet engine base components.
+        registerBaseControllers();
+        registerBaseCommandListeners();
 
         // External Storage - Prepare and load data from external data source.
-        this.externalStorage = new ExternalStorage();
-        externalStorage.onStartup();
+        storageController.onStartup();
 
-        // Allow the implementing plugin to perform configuration of it's own.
+        // Allow the implementing plugin to perform configuration of its own.
         enablePlugin();
-
-        // Register Tobnet Engine global admin commands.
-        getCommandController().registerCommandLister(new TobnetArenaCommandListener());
 
         // Load complete. Log the round trip time.
         TobnetLogUtils.info("Engine loaded successfully. Took " +
                 new TimeDifference(pluginLoadStart, LocalDateTime.now()));
+    }
+
+    @Override
+    public void configure(Binder binder) {
+
+        //binder.requestStaticInjection(TobnetStorageController.class);
+        //binder.requestStaticInjection(TobnetCommandController.class);
     }
 
     @Override
@@ -82,20 +99,44 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
         disablePlugin();
 
         // Allow external storage to perform shutdown operations.
-        externalStorage.onShutdown();
+        storageController.onShutdown();
 
         // Unload complete. Log the round trip time.
         TobnetLogUtils.info("Engine unloaded successfully. Took " +
                 new TimeDifference(pluginUnloadStart, LocalDateTime.now()));
     }
 
+    private void registerBaseControllers() {
+
+        arenaController = new ArenaController();
+        storageController = new TobnetStorageController();
+        commandController = new TobnetCommandController();
+        messageController = new TobnetMessageController();
+    }
+
+    private void registerBaseCommandListeners() {
+
+        getCommandController().registerCommandLister(new TobnetBaseArenaCommandListener());
+    }
+
     /**
-     * Returns the {@link MessageController}.
+     * Returns the Tobnet Engine Command Controller.
+     *
+     * @return Command Controller.
+     * @author au5tie
+     */
+    public final TobnetCommandController getCommandController() {
+
+        return commandController;
+    }
+
+    /**
+     * Returns the {@link TobnetMessageController}.
      *
      * @return Message Controller.
      * @author au5tie
      */
-    public static MessageController getMessageController() {
+    public static TobnetMessageController getMessageController() {
 
         return messageController;
     }
@@ -109,17 +150,6 @@ public abstract class TobnetGamePlugin extends JavaPlugin {
     public static ArenaController getArenaController() {
 
         return arenaController;
-    }
-
-    /**
-     * Returns the {@link CommandController}.
-     *
-     * @return Command Controller.
-     * @author au5tie
-     */
-    public static CommandController getCommandController() {
-
-        return commandController;
     }
 
     public static TobnetGamePlugin getInstance() {

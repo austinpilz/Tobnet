@@ -5,6 +5,7 @@ import com.au5tie.minecraft.tobnet.game.message.provider.EnglishMessageProvider;
 import com.au5tie.minecraft.tobnet.game.message.provider.MessageProvider;
 import com.au5tie.minecraft.tobnet.game.message.provider.TobnetMessageProviderChangedEvent;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.google.inject.Singleton;
 
 import java.text.MessageFormat;
 import java.util.Optional;
@@ -19,12 +20,13 @@ import java.util.Optional;
  *
  * @author au5tie
  */
-public final class MessageController {
+@Singleton
+public final class TobnetMessageController {
 
     private final MessageProvider defaultProvider;
     private MessageProvider provider;
 
-    public MessageController() {
+    public TobnetMessageController() {
 
         defaultProvider = new EnglishMessageProvider();
 
@@ -32,7 +34,7 @@ public final class MessageController {
         changeProvider(new EnglishMessageProvider());
     }
 
-    public MessageController(MessageProvider provider) {
+    public TobnetMessageController(MessageProvider provider) {
 
         defaultProvider = new EnglishMessageProvider();
 

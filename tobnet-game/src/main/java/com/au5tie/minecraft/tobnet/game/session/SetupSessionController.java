@@ -1,6 +1,5 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
-import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
@@ -10,6 +9,7 @@ import java.util.*;
  * The Setup Session Controller is an abstract controller which manages all of the {@link SetupSession}'s of the implementing
  * type. This class will manage keeping track of the session, creating new ones, and routing user interactions to the right
  * session.
+ *
  * @author au5tie
  */
 @Getter
@@ -28,12 +28,13 @@ public abstract class SetupSessionController {
 
         // Command Listener.
         commandListener = new SetupSessionCommandListener(this);
-        TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
+        //TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
     }
 
     /**
      * Begins a new {@link SetupSession} for the requested player. This method should create the new session in the
      * implementing class, creating the SetupSession of the generic type.
+     *
      * @param player Player.
      * @return Setup Session.
      * @author au5tie
@@ -42,6 +43,7 @@ public abstract class SetupSessionController {
 
     /**
      * Registers a new {@link SetupSession} with the controller.
+     *
      * @param session Arena Setup Session.
      * @author au5tie
      */
@@ -52,6 +54,7 @@ public abstract class SetupSessionController {
 
     /**
      * Re-registers a {@link SetupSession} for the supplied user.
+     *
      * @param playerUuid Player UUID.
      * @author au5tie
      */
@@ -62,6 +65,7 @@ public abstract class SetupSessionController {
 
     /**
      * Returns all of the registered {@link SetupSession}.
+     *
      * @return Setup Sessions.
      * @author au5tie
      */
@@ -73,6 +77,7 @@ public abstract class SetupSessionController {
     /**
      * Requests a new {@link SetupSession} be created and prepared for the requesting user. This will create the new
      * session, prepare it, and register it with the controller.
+     *
      * @param player Player.
      * @return Setup Session.
      * @author au5tie
@@ -94,6 +99,7 @@ public abstract class SetupSessionController {
     /**
      * Begins a new {@link SetupSession} for the requesting user. This will allow the implementing controller to take care
      * of creating the specific session and then this will register it with the controller.
+     *
      * @param player Player.
      * @return Setup Session.
      * @author au5tie
@@ -119,6 +125,7 @@ public abstract class SetupSessionController {
 
     /**
      * Processes the request to terminate an existing {@link SetupSession}.
+     *
      * @param playerUuid Player UUID.
      * @author au5tie
      */
@@ -143,6 +150,7 @@ public abstract class SetupSessionController {
     /**
      * Requests the invocation of the next {@link SetupSessionStep} on user input/interaction. This will pass in context
      * which contains player interaction information which will get routed to the next step to be invoked.
+     *
      * @param playerUuid Player UUID.
      * @param context Setup Session Step Invocation Context.
      * @author au5tie
@@ -164,6 +172,7 @@ public abstract class SetupSessionController {
 
     /**
      * Returns if the supplied player already has an existing {@link SetupSession} ongoing.
+     *
      * @param playerUuid Player UUID.
      * @return If the player already has an existing setup session in progress.
      * @author au5tie
@@ -175,6 +184,7 @@ public abstract class SetupSessionController {
 
     /**
      * Returns the existing {@link SetupSession} for the supplied player.
+     *
      * @param playerUuid Player UUID.
      * @return Arena Setup Session.
      * @author au5tie

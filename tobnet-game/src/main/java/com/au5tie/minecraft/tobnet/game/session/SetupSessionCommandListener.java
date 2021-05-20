@@ -1,6 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
-import com.au5tie.minecraft.tobnet.game.command.CommandListener;
+import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.util.TobnetCommandUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
@@ -16,7 +16,6 @@ public class SetupSessionCommandListener extends CommandListener {
 
     @Override
     protected void registerCommands() {
-
         registerCommand("tobsetup");
     }
 
@@ -46,6 +45,7 @@ public class SetupSessionCommandListener extends CommandListener {
 
     /**
      * Handles the setup session command invocation.
+     *
      * @param context Setup Session Step Invocation Context.
      * @author au5tie
      */
@@ -70,6 +70,7 @@ public class SetupSessionCommandListener extends CommandListener {
      * Handles the request to start a new {@link SetupSession}. If the user already has an existing setup session, this
      * will terminate the existing session before beginning the new one as only one session can be in progress per player
      * at the same time.
+     *
      * @param context Setup Session Step Invocation Context.
      * @author au5tie
      */
@@ -88,6 +89,7 @@ public class SetupSessionCommandListener extends CommandListener {
     /**
      * Handles the request to end the user's current {@link SetupSession}. This will request the termination of the ongoing
      * setup session, if one exists.
+     *
      * @param context Setup Session Step Invocation Context.
      * @author au5tie
      */
@@ -102,6 +104,7 @@ public class SetupSessionCommandListener extends CommandListener {
     /**
      * Handles the case of the console sending setup session commands. This will send the console back a message
      * letting them know that only players can interact with setup sessions.
+     *
      * @param sender Command Sender.
      * @author au5tie
      */
@@ -112,6 +115,7 @@ public class SetupSessionCommandListener extends CommandListener {
 
     /**
      * Builds the {@link SetupSessionStepInvocationContext} for the executed command.
+     *
      * @param sender Command Sender.
      * @param command Command.
      * @param label Command Label.

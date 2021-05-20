@@ -2,6 +2,7 @@ package com.au5tie.minecraft.tobnet.game.io;
 
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,7 +18,9 @@ import java.time.LocalDateTime;
 public abstract class StorageManager {
 
     private final StorageManagerType type;
-    private final ExternalStorage externalStorage;
+
+    @Getter(AccessLevel.PROTECTED)
+    private final TobnetStorageController tobnetStorageController;
 
     /**
      * Prepares the external storage tables for the manager. This is where the implementing storage manager will create

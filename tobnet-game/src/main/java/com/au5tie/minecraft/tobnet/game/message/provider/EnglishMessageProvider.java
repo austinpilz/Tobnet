@@ -17,6 +17,11 @@ public class EnglishMessageProvider extends MessageProvider {
 
     public void registerMessages() {
 
+        // Arena.
+        registerMessage(MessageConstants.ARENA_CONSOLE_HEADER, "-- Arenas --");
+        registerMessage(MessageConstants.ARENA_NONE_REGISTERED, "There are no registered arenas.");
+        registerMessage(MessageConstants.ARENA_NO_EXIST, "Arena {} does not exist.");
+
         // Countdown.
         registerMessage(MessageConstants.COUNTDOWN_GAME_BEGINS, "Game begins in {0}");
         registerMessage(MessageConstants.COUNTDOWN_DISPLAY_TITLE, "Game Countdown");

@@ -2,9 +2,9 @@ package com.au5tie.minecraft.tobnet.game.io.manager;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
-import com.au5tie.minecraft.tobnet.game.io.ExternalStorage;
 import com.au5tie.minecraft.tobnet.game.io.StorageManager;
 import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
+import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,8 +20,8 @@ import java.sql.*;
  */
 public class ArenaStorageManager extends StorageManager {
 
-    public ArenaStorageManager(ExternalStorage externalStorage) {
-        super(StorageManagerType.ARENA, externalStorage);
+    public ArenaStorageManager(TobnetStorageController tobnetStorageController) {
+        super(StorageManagerType.ARENA, tobnetStorageController);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ArenaStorageManager extends StorageManager {
      */
     protected void prepareArenaTable() {
         // Establish our database connection.
-        Connection connection = getExternalStorage().getConnection();
+        Connection connection = getTobnetStorageController().getConnection();
 
         try {
             Statement statement = connection.createStatement();
@@ -58,7 +58,7 @@ public class ArenaStorageManager extends StorageManager {
      */
     protected void loadData() {
         try {
-            Connection connection = getExternalStorage().getConnection();
+            Connection connection = getTobnetStorageController().getConnection();
 
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT `Name`, `Class`, `B1X`, `B1Y`, `B1Z`, `B2X`, `B2Y`, `B2Z`, `World` FROM `arena`");
 

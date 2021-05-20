@@ -1,11 +1,13 @@
 package com.au5tie.minecraft.tobnet.game.io;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.io.event.TobnetExternalStorageLoadCompleteEvent;
 import com.au5tie.minecraft.tobnet.game.io.manager.ArenaStorageManager;
 import com.au5tie.minecraft.tobnet.game.io.manager.LocationStorageManager;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.google.inject.Singleton;
 
 import java.io.File;
 import java.sql.Connection;
@@ -20,12 +22,13 @@ import java.util.Map;
  *
  * @author au5tie
  */
-public class ExternalStorage {
+@Singleton
+public class TobnetStorageController implements TobnetController {
 
     private final Map<StorageManagerType, StorageManager> storageManagers;
     private Connection connection;
 
-    public ExternalStorage() {
+    public TobnetStorageController() {
 
         // Prepare the various storage managers.
         storageManagers = new HashMap<>();

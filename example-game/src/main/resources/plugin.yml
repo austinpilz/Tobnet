@@ -10,9 +10,7 @@ api-version: 1.16
 commands:
   f13:
     description: Friday the 13th Player Commands.
-  tobsetup:
-    description: Tobnet Engine setup command.
-  tobadmin:
+  tobnet:
     description: Tobnet Engine admin command.
 permissions:
   Pie.*:
