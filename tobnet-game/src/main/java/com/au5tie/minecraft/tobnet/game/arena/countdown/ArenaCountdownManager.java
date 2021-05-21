@@ -22,6 +22,7 @@ import lombok.Getter;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
+import org.bukkit.command.CommandSender;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -335,5 +336,19 @@ public class ArenaCountdownManager extends ArenaManager {
            // Update the progress of the display.
            displayComponent.updateProgress(getSecondsLeft(), getStartingSeconds());
        }
+    }
+
+    /**
+     * Generates the console status lines pertaining the game status.
+     *
+     * @return Console status lines.
+     * @author au5tie
+     */
+    @Override
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return List.of(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_COUNTDOWN) +
+                ": " + getSecondsLeft() + " " +
+                TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_SECONDS));
     }
 }

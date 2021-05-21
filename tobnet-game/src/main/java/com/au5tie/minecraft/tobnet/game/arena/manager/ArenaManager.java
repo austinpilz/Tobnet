@@ -3,8 +3,10 @@ package com.au5tie.minecraft.tobnet.game.arena.manager;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import lombok.Getter;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -81,5 +83,18 @@ public abstract class ArenaManager {
     public final void registerEventHandler(ArenaEventHandler eventHandler) {
 
         eventHandlers.add(eventHandler);
+    }
+
+    /**
+     * Generates console status lines to be displayed to the sender. These are generated whenever the console is attempting
+     * to display information about the arena as a whole. This allows for per-manager implementation to avoid having the
+     * command listener to have to keep track of every manager under the sun.
+     *
+     * @return List of status messages to display in the console.
+     * @author au5tie
+     */
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return Collections.emptyList();
     }
 }

@@ -16,6 +16,7 @@ import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import lombok.Getter;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Arrays;
@@ -182,5 +183,18 @@ public class ArenaChatManager extends ArenaManager {
         String newMessage = ChatColor.RED + TobnetGamePlugin.chatPrefix + ChatColor.RESET + message;
 
         players.forEach(player -> player.getPlayer().sendMessage(newMessage));
+    }
+
+    /**
+     * Generates the console status lines pertaining the game status.
+     *
+     * @return Console status lines.
+     * @author au5tie
+     */
+    @Override
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return List.of(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_CHAT_HANDLER) +
+                ": " + getHandlerForCurrentArenaStatus().getClass().getSimpleName());
     }
 }

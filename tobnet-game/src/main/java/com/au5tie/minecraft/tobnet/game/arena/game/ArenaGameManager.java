@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.arena.game;
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.annotation.TobnetRecommendOverride;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.countdown.ArenaCountdownManager;
@@ -12,7 +13,11 @@ import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class ArenaGameManager extends ArenaManager {
 
@@ -302,5 +307,18 @@ public class ArenaGameManager extends ArenaManager {
         // Look at the gameplay configuration.
         // TODO
         return 2;
+    }
+
+    /**
+     * Generates the console status lines pertaining the game status.
+     *
+     * @return Console status lines.
+     * @author au5tie
+     */
+    @Override
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return List.of(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_GAME) +
+                ": " + getGameStatus());
     }
 }

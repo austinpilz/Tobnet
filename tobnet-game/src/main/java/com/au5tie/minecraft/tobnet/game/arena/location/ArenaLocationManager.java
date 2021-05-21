@@ -1,8 +1,11 @@
 package com.au5tie.minecraft.tobnet.game.arena.location;
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,5 +87,18 @@ public class ArenaLocationManager extends ArenaManager {
 
     public void removeLocation(ArenaLocation location) {
         // TODO When removing a location from arena, also need to delete from storage DB.
+    }
+
+    /**
+     * Generates the console status lines pertaining the game status.
+     *
+     * @return Console status lines.
+     * @author au5tie
+     */
+    @Override
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return List.of(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_LOCATIONS) +
+                ": " + getNumberLocations());
     }
 }

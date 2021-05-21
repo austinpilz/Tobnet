@@ -3,7 +3,6 @@ package com.au5tie.minecraft.tobnet.game.command.listener;
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameManager;
-import com.au5tie.minecraft.tobnet.game.arena.location.ArenaLocationManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineMissingManagerException;
@@ -92,6 +91,15 @@ public class TobnetBaseArenaCommandListener extends CommandListener {
         return arena.getName() + " (" + gameManager.getGameStatus().name() + ")";
     }
 
+    /**
+     * Generates console print out of the arena overview. This will iterate through all of the managers in the arena and
+     * request they provide a status line for each of their area(s) of responsibility. Each will then be displayed to the
+     * user.
+     *
+     * @param sender Sender.
+     * @param arenaName Arena Name.
+     * @author au5tie
+     */
     private void displayArenaInformation(CommandSender sender, String arenaName) {
 
         Optional<TobnetArena> arena = TobnetGamePlugin.getArenaController().getArenaByName(arenaName);
@@ -102,18 +110,14 @@ public class TobnetBaseArenaCommandListener extends CommandListener {
                     TobnetGamePlugin.getMessageController().getMessage(MessageConstants.ARENA_NO_EXIST));
         }
 
-        // Link managers.
-        ArenaGameManager gameManager = (ArenaGameManager) ArenaManagerUtils.getManagerOfType(arena.get(), ArenaManagerType.GAME).orElseThrow(TobnetEngineMissingManagerException::new);
-        ArenaLocationManager locationManager = (ArenaLocationManager) ArenaManagerUtils.getManagerOfType(arena.get(), ArenaManagerType.LOCATION).orElseThrow(TobnetEngineMissingManagerException::new);
-
+        // Arena header.
         TobnetChatUtils.sendCommandSenderMessage(sender, "-- " + arenaName + " ---");
-        TobnetChatUtils.sendCommandSenderMessage(sender, "Status: " + gameManager.getGameStatus());
-        TobnetChatUtils.sendCommandSenderMessage(sender, "Locations: " + locationManager.getNumberLocations());
 
-        // -- Arena Name --
-        // Status: X
-        // Locations:
-
-        // TODO Display
+        // Request each manager to display information.
+        arena.get().getManagers().forEach(manager ->
+                manager.getConsoleStatusLines(sender).forEach(line ->
+                                TobnetChatUtils.sendCommandSenderMessage(sender,line)
+                )
+        );
     }
 }

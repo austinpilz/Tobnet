@@ -17,6 +17,14 @@ public class EnglishMessageProvider extends MessageProvider {
 
     public void registerMessages() {
 
+        // Console.
+        registerMessage(MessageConstants.CONSOLE_CHAT_HANDLER, "Chat Handler");
+        registerMessage(MessageConstants.CONSOLE_COUNTDOWN, "Countdown");
+        registerMessage(MessageConstants.CONSOLE_SECONDS, "seconds");
+        registerMessage(MessageConstants.CONSOLE_GAME, "Game Status");
+        registerMessage(MessageConstants.CONSOLE_LOCATIONS, "Locations");
+        registerMessage(MessageConstants.CONSOLE_SPAWN_LOCATIONS, "Spawn Locations");
+
         // Arena.
         registerMessage(MessageConstants.ARENA_CONSOLE_HEADER, "-- Arenas --");
         registerMessage(MessageConstants.ARENA_NONE_REGISTERED, "There are no registered arenas.");

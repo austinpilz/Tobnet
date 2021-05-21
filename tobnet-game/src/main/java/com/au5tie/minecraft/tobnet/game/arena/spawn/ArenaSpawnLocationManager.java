@@ -1,6 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.arena.spawn;
 
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.location.ArenaLocation;
 import com.au5tie.minecraft.tobnet.game.arena.location.ArenaLocationManager;
@@ -9,6 +10,8 @@ import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,5 +85,29 @@ public class ArenaSpawnLocationManager extends ArenaManager {
     public List<ArenaLocation> getSpawnLocations() {
 
         return Collections.unmodifiableList(locations);
+    }
+
+    /**
+     * Returns the number of registered spawn locations.
+     *
+     * @return Number of registered spawn locations.
+     * @author au5tie
+     */
+    public int getNumberLocations() {
+
+        return locations.size();
+    }
+
+    /**
+     * Generates the console status lines pertaining the game status.
+     *
+     * @return Console status lines.
+     * @author au5tie
+     */
+    @Override
+    public List<String> getConsoleStatusLines(CommandSender sender) {
+
+        return List.of(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.CONSOLE_SPAWN_LOCATIONS) +
+                ": " + getNumberLocations());
     }
 }
