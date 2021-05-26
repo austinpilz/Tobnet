@@ -3,6 +3,7 @@ package com.au5tie.minecraft.tobnet.game.player.display;
 import com.au5tie.minecraft.tobnet.game.player.GamePlayer;
 import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponent;
 import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDisplayComponentLocation;
+import com.au5tie.minecraft.tobnet.game.player.display.exception.DuplicatePlayerDisplayComponentException;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
@@ -103,8 +104,29 @@ public class GamePlayerDisplayManager {
      * @author au5tie
      */
     public void registerComponent(GamePlayerDisplayComponent component) {
+
+        if (displayComponents.containsKey(component.getName()) && displayComponents.get(component.getName()) != component) {
+            // There's already another component with this name that is a different object. Reject registration.
+            throw new DuplicatePlayerDisplayComponentException("Another display component with the name " +
+                    component.getName() + " is already registered for the player " + getPlayer().getUsername());
+        }
+
         // Add the component to the manager.
         addComponent(component);
+    }
+
+    /**
+     * Unregisters display component from the manager. This will initiate the destruction of the component if found.
+     *
+     * @param component Display component.
+     * @author au5tie
+     */
+    public void unregisterComponent(GamePlayerDisplayComponent component) {
+
+        if (component != null && doesHaveComponent(component.getName())) {
+            component.destroyComponent();
+            removeComponent(component);
+        }
     }
 
     /**
@@ -180,7 +202,7 @@ public class GamePlayerDisplayManager {
 
         if (currentlyVisibleComponent.isPresent()) {
             // Remove the currently visible one so we don't compare against it.
-            shouldBeVisibleComponents.remove(currentlyVisibleComponent);
+            shouldBeVisibleComponents.remove(currentlyVisibleComponent.get());
         }
 
         // Determine the highest priority component which should be in view.
