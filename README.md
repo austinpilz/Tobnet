@@ -7,6 +7,7 @@ Tobnet is an advanced game plugin engine for Minecraft. Built on the Spigot API,
 ## Features
 * Multi-state Arena based games.
 * Full customization of every facet of gameplay.
+* Fully automated [player display management](https://github.com/austinpilz/Tobnet/wiki/Player-Displays). Register custom display components and Tobnet will automatically display based on priority, auto update, and fully manage every players unique display.
 * Built in waiting rooms, player skin customization, user profiles, player xp.
 * No database configuration required, Tobnet takes care of it all.
 * Interactive menus.
