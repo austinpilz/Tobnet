@@ -9,4 +9,8 @@ public class TobnetEngineException extends RuntimeException {
     public TobnetEngineException(String message) {
         super(message);
     }
+
+    public TobnetEngineException(String message, Throwable throwable) {
+        super(message, throwable);
+    }
 }

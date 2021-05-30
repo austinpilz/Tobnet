@@ -10,6 +10,12 @@ public class MessageConstants {
     public static final String CONSOLE_LOCATIONS = "console_locations";
     public static final String CONSOLE_SPAWN_LOCATIONS = "console_spawn_locations";
 
+    // Setup.
+    public static final String SETUP_SESSION_COMMAND = "setup_command_name";
+    public static final String SETUP_SESSION_END_COMMAND = "setup_command_end_name";
+    public static final String SETUP_SESSION_NON_PLAYER_INVOKE_ERROR = "setup_command_nonplayer_invoke_error";
+    public static final String SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR = "setup_command_type_missing_cli_error";
+
     // Arena.
     public static final String ARENA_CONSOLE_HEADER = "arena_console_header";
     public static final String ARENA_NO_EXIST = "arena_no_exist";

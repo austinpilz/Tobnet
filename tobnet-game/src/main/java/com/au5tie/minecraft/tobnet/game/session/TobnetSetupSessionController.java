@@ -1,45 +1,78 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
-import lombok.Getter;
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
+import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * The Setup Session Controller is an abstract controller which manages all of the {@link SetupSession}'s of the implementing
- * type. This class will manage keeping track of the session, creating new ones, and routing user interactions to the right
- * session.
+ * TODO
  *
  * @author au5tie
  */
-@Getter
-public abstract class SetupSessionController {
+public class TobnetSetupSessionController implements TobnetController {
 
-    private final String sessionType;
     private final Map<String, SetupSession> sessions;
+    private final Map<String, Class> supportedSessionTypes;
     private final SetupSessionCommandListener commandListener;
 
-    public SetupSessionController(String sessionType) {
+    public TobnetSetupSessionController() {
 
         sessions = new HashMap<>();
-
-        // Define the type of session this controller manages.
-        this.sessionType = sessionType;
+        supportedSessionTypes = new HashMap<>();
 
         // Command Listener.
         commandListener = new SetupSessionCommandListener(this);
-        //TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
+    }
+
+    @Override
+    public void prepare() {
+        // Register the command listener.
+        TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
     }
 
     /**
-     * Begins a new {@link SetupSession} for the requested player. This method should create the new session in the
-     * implementing class, creating the SetupSession of the generic type.
      *
-     * @param player Player.
-     * @return Setup Session.
+     * @param sessionClass Setup Session class.
+     * @param commandLevelType Command line name for the session type.
+     * @author au5tie
+     *
+     */
+    public void registerSessionType(Class sessionClass, String commandLevelType) {
+
+        supportedSessionTypes.put(commandLevelType.toUpperCase(), sessionClass);
+    }
+
+    /**
+     * Determines if the provided session type is supported.
+     *
+     * @param sessionType Setup session type.
+     * @return If the session type is supported.
      * @author au5tie
      */
-    protected abstract SetupSession prepareNewSession(Player player);
+    public boolean isSessionTypeSupported(String sessionType) {
+
+        return supportedSessionTypes.containsKey(sessionType.toUpperCase());
+    }
+
+    /**
+     * Obtains the {@link SetupSession} implementation class for the provided session type, if exists.
+     *
+     * @param sessionType Session Type.
+     * @return Session type class.
+     * @author au5tie
+     */
+    public Optional<Class> getSupportedSessionClass(String sessionType) {
+
+        return Optional.ofNullable(supportedSessionTypes.get(sessionType.toUpperCase()));
+    }
 
     /**
      * Registers a new {@link SetupSession} with the controller.
@@ -53,7 +86,7 @@ public abstract class SetupSessionController {
     }
 
     /**
-     * Re-registers a {@link SetupSession} for the supplied user.
+     * De-registers a {@link SetupSession} for the supplied user.
      *
      * @param playerUuid Player UUID.
      * @author au5tie
@@ -71,43 +104,43 @@ public abstract class SetupSessionController {
      */
     protected final List<SetupSession> getSessions() {
 
-        return new ArrayList<>(sessions.values());
+        return sessions.values().stream().collect(Collectors.toUnmodifiableList());
     }
 
     /**
      * Requests a new {@link SetupSession} be created and prepared for the requesting user. This will create the new
-     * session, prepare it, and register it with the controller.
+     * session, prepare it, register it with the controller, and begin it.
      *
-     * @param player Player.
+     * @param context Setup Session Context.
      * @return Setup Session.
      * @author au5tie
      */
-    public SetupSession requestNewSession(Player player) {
+    public SetupSession requestNewSession(SetupSessionStepInvocationContext context) {
 
-        if (!doesUserHaveExistingSession(player.getUniqueId().toString())) {
+        if (!doesUserHaveExistingSession(context.getPlayer().getUniqueId().toString())) {
             // Begin the new session.
-            return beginNewSession(player);
+            return beginNewSession(context.getSessionType(), context.getPlayer());
         } else {
             // The user already has an existing setup session in progress. Terminate their existing in progress session.
-            requestSessionTermination(player.getUniqueId().toString());
+            requestSessionTermination(context.getPlayer().getUniqueId().toString());
 
             // Begin the session request process again.
-            return requestNewSession(player);
+            return requestNewSession(context);
         }
     }
 
     /**
-     * Begins a new {@link SetupSession} for the requesting user. This will allow the implementing controller to take care
-     * of creating the specific session and then this will register it with the controller.
+     * Begins a new {@link SetupSession} for the requesting user. This will create a new session and initiate the session
+     * progress line.
      *
      * @param player Player.
      * @return Setup Session.
      * @author au5tie
      */
-    private SetupSession beginNewSession(Player player) {
+    private SetupSession beginNewSession(String sessionType, Player player) {
 
         // Have the implementing controller prepare the specific session.
-        SetupSession session = prepareNewSession(player);
+        SetupSession session = prepareNewSession(sessionType, player);
 
         // Register the new session with the controller.
         addSession(session);
@@ -121,6 +154,28 @@ public abstract class SetupSessionController {
         session.onSessionBegin(context);
 
         return session;
+    }
+
+    /**
+     * Creates a new {@link SetupSession} for the requested player.
+     *
+     * @param sessionType Setup Session Type.
+     * @param player Player.
+     * @return Setup Session.
+     * @author au5tie
+     */
+    private SetupSession prepareNewSession(String sessionType, Player player) {
+
+        Optional<Class> sessionClass = getSupportedSessionClass(sessionType);
+
+        try {
+            Class[] types = {Player.class};
+            Constructor arenaConstructor = sessionClass.orElseThrow(SetupSessionTypeNotSupportedException::new).getConstructor(types);
+            Object[] parameters = {player};
+            return (SetupSession) arenaConstructor.newInstance(parameters);
+        } catch (Exception exception) {
+            throw new TobnetEngineException("Encountered an error while attempting to create new setup session", exception);
+        }
     }
 
     /**

@@ -25,6 +25,11 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
 
     private Map<String, List<CommandListener>> commands = new HashMap<>();
 
+    @Override
+    public void prepare() {
+        //
+    }
+
     /**
      * Registers the {@link CommandListener}'s supported commands. This will register each of the interested commands
      * to the listener itself.

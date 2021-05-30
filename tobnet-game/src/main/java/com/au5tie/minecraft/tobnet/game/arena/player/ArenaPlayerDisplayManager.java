@@ -59,5 +59,13 @@ public class ArenaPlayerDisplayManager extends ArenaManager {
         return getPlayerManager().getPlayers().stream()
                 .filter(player -> !player.getDisplayManager().doesHaveComponent(componentName))
                 .collect(Collectors.toList());
+
+    }
+
+    public void test() {
+
+        getPlayerManager().getPlayers().forEach(player -> player.getDisplayManager());
+
+
     }
 }

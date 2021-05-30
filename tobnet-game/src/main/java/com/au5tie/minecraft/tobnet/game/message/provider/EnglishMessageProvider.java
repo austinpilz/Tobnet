@@ -25,6 +25,13 @@ public class EnglishMessageProvider extends MessageProvider {
         registerMessage(MessageConstants.CONSOLE_LOCATIONS, "Locations");
         registerMessage(MessageConstants.CONSOLE_SPAWN_LOCATIONS, "Spawn Locations");
 
+        // Setup.
+        registerMessage(MessageConstants.SETUP_SESSION_COMMAND, "setup");
+        registerMessage(MessageConstants.SETUP_SESSION_END_COMMAND, "end");
+        registerMessage(MessageConstants.SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR, "Setup session type was not provided. Please verify command syntax.");
+        registerMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR, "end"); //TODO
+
+
         // Arena.
         registerMessage(MessageConstants.ARENA_CONSOLE_HEADER, "-- Arenas --");
         registerMessage(MessageConstants.ARENA_NONE_REGISTERED, "There are no registered arenas.");

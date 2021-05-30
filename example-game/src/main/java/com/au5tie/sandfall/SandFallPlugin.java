@@ -1,6 +1,7 @@
 package com.au5tie.sandfall;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.sandfall.arena.setup.SandFallArenaSetupSession;
 import com.au5tie.sandfall.command.F13BaseCommandListener;
 
 /**
@@ -14,8 +15,17 @@ public class SandFallPlugin extends TobnetGamePlugin {
     @Override
     public void enablePlugin() {
 
-        // Create the base F13 command listener for player interface.
+        // Create the base F13 command listener for player interface. TODO REVIEW
         getCommandController().registerCommandLister(new F13BaseCommandListener());
+
+
+
+        configureSetupSessions();
+
+    }
+
+    private void configureSetupSessions() {
+        getSetupSessionController().registerSessionType(SandFallArenaSetupSession.class, "arena");
     }
 
     @Override

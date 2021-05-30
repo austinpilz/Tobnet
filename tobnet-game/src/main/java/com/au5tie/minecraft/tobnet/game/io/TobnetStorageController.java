@@ -35,6 +35,11 @@ public class TobnetStorageController implements TobnetController {
         prepareManagers();
     }
 
+    @Override
+    public void prepare() {
+
+    }
+
     /**
      * Prepares all of the storage managers which control the storage/retrieval of their various managed components.
      *

@@ -23,6 +23,7 @@ public class SetupSessionStepInvocationContext {
     private Player player;
     private Block block;
     private String command;
+    private String sessionType;
     private List<String> commandArguments;
 
     /**

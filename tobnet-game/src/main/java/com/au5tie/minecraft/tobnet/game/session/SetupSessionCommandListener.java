@@ -1,6 +1,8 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
+import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
+import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
 import com.au5tie.minecraft.tobnet.game.util.TobnetCommandUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
@@ -9,13 +11,21 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
+/**
+ *
+ * Command Line Structure: /[topLevelCommand] setup [sessionType] [args...]
+ *                                            [0]   [1]           [n]
+ *
+ * /[topLevelCommand] setup end
+ */
 @AllArgsConstructor
 public class SetupSessionCommandListener extends CommandListener {
 
-    private final SetupSessionController controller;
+    private final TobnetSetupSessionController controller;
 
     @Override
     protected void registerCommands() {
+        //TODO Top Level Command? Inheir from implementing plugin IDK
         registerCommand("tobsetup");
     }
 
@@ -23,7 +33,7 @@ public class SetupSessionCommandListener extends CommandListener {
     public boolean onCommandExecuted(CommandSender sender, Command command, String label, String[] args) {
 
         // Validate that setup type of the command matches the type that the controller manages.
-        if (args.length > 0 && args[0].equalsIgnoreCase(controller.getSessionType())) {
+        if (args.length > 0 && TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_COMMAND).equalsIgnoreCase(args[0])) {
 
             // Validate that the sender is a player.
             if (!TobnetCommandUtils.isSenderAPlayer(sender)) {
@@ -51,18 +61,24 @@ public class SetupSessionCommandListener extends CommandListener {
      */
     private void handleCommand(SetupSessionStepInvocationContext context) {
 
-        if (context.getCommandArguments().size() == 1) {
-            // Start Session command.
-            handleStartSetup(context);
-        } else if (context.getCommandArguments().size() > 1) {
+        if (context.getCommandArguments().size() >= 2) {
 
-            if (context.getCommandArguments().get(1).equalsIgnoreCase("end")) {
-                // User is requesting we terminate the session.
+            if (TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_END_COMMAND).equalsIgnoreCase(context.getCommandArguments().get(1))) {
+                // Session end requested.
                 handleEndSetup(context);
             } else {
-                // User is invoking a sessions step.
-                controller.sessionStepInvoke(context.getPlayer().getUniqueId().toString(), context);
+                // The session type was provided.
+                if (controller.doesUserHaveExistingSession(context.getPlayer().getUniqueId().toString())) {
+                    // Player has existing session, pass the context into the step invocation.
+                    controller.sessionStepInvoke(context.getPlayer().getUniqueId().toString(), context);
+                } else {
+                    // Player does not already have a session, begin a new one.
+                    handleStartSetup(context);
+                }
             }
+        } else {
+            // Session type was not provided.
+            context.getPlayer().sendMessage(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR));
         }
     }
 
@@ -83,7 +99,7 @@ public class SetupSessionCommandListener extends CommandListener {
         }
 
         // Request the new session.
-        controller.requestNewSession(context.getPlayer());
+        controller.requestNewSession( context);
     }
 
     /**
@@ -110,7 +126,7 @@ public class SetupSessionCommandListener extends CommandListener {
      */
     private void handleNonPlayerSender(CommandSender sender) {
 
-        sender.sendMessage("[Tobnet] Setup sessions can only be invoked by a player, not the console.");
+        sender.sendMessage(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR));
     }
 
     /**
@@ -125,10 +141,17 @@ public class SetupSessionCommandListener extends CommandListener {
      */
     private SetupSessionStepInvocationContext buildContext(CommandSender sender, Command command, String label, String[] args) {
 
-        return SetupSessionStepInvocationContext.builder()
+        SetupSessionStepInvocationContext context = SetupSessionStepInvocationContext
+                .builder()
                 .player((Player)sender)
                 .command(command.getName())
                 .commandArguments(Arrays.asList(args))
                 .build();
+
+        if (args.length > 1) {
+            context.setSessionType(args[1]);
+        }
+
+        return context;
     }
 }

@@ -70,6 +70,7 @@ public abstract class SetupSessionStep {
 
     /**
      * Sets the {@link ChatColor} to be used for the prompt's border (header & footer).
+     *
      * @param color Color.
      * @author au5tie
      */
@@ -81,6 +82,7 @@ public abstract class SetupSessionStep {
     /**
      * Displays the initial step prompt to the user. This will take care of the custom border and header for the step.
      * This delegates the context of the prompt to the implementing step via the displayPromptBody() method.
+     *
      * @param context Invocation Context.
      * @author au5tie
      */
@@ -144,6 +146,7 @@ public abstract class SetupSessionStep {
 
     /**
      * Marks the step as having been completed.
+     *
      * @author au5tie
      */
     protected final void completeStep() {

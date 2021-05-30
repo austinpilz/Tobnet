@@ -2,7 +2,6 @@ package com.au5tie.minecraft.tobnet.game.controller;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
-import com.au5tie.minecraft.tobnet.game.arena.setup.ArenaSetupSessionController;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.google.inject.Singleton;
 import org.bukkit.Location;
@@ -13,15 +12,19 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-public class ArenaController {
+public class ArenaController implements TobnetController {
 
     private final List<TobnetArena> arenas;
-    private final ArenaSetupSessionController setupSessionController;
 
     public ArenaController() {
 
         this.arenas = new ArrayList<>();
-        this.setupSessionController = new ArenaSetupSessionController();
+    }
+
+
+    @Override
+    public void prepare() {
+
     }
 
     /**
@@ -103,16 +106,5 @@ public class ArenaController {
         return arenas.stream()
                 .filter(arena -> arena.getName().equalsIgnoreCase(arenaName))
                 .findFirst();
-    }
-
-    /**
-     * Returns the {@link ArenaSetupSessionController}.
-     *
-     * @return Arena Setup Session Controller.
-     * @author au5tie
-     */
-    public ArenaSetupSessionController getSetupSessionController() {
-
-        return setupSessionController;
     }
 }

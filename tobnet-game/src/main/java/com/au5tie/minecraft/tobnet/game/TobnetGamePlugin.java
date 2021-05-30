@@ -3,9 +3,11 @@ package com.au5tie.minecraft.tobnet.game;
 import com.au5tie.minecraft.tobnet.game.command.TobnetCommandController;
 import com.au5tie.minecraft.tobnet.game.command.listener.TobnetBaseArenaCommandListener;
 import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
+import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.guice.TobnetPluginInjector;
 import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
 import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
+import com.au5tie.minecraft.tobnet.game.session.TobnetSetupSessionController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
 import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.google.inject.Binder;
@@ -23,8 +25,9 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     public static TobnetGamePlugin instance;
 
     private static ArenaController arenaController;
-    private static TobnetStorageController storageController;
     private static TobnetCommandController commandController;
+    private static TobnetStorageController storageController;
+    private static TobnetSetupSessionController setupSessionController;
     private static TobnetMessageController messageController;
 
     public static String chatPrefix = "[Tobnet] ";
@@ -32,6 +35,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     // Guice.
     private Injector injector;
     private final List<Module> modules = new ArrayList<>();
+    private final List<TobnetController> controllers = new ArrayList<>();
 
     public TobnetGamePlugin() {
 
@@ -68,7 +72,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
         this.modules.forEach(this.injector::injectMembers);
 
         // Setup Tobnet engine base components.
-        registerBaseControllers();
+        setupBaseControllers();
         registerBaseCommandListeners();
 
         // External Storage - Prepare and load data from external data source.
@@ -76,6 +80,9 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
         // Allow the implementing plugin to perform configuration of its own.
         enablePlugin();
+
+        // Prepare the controllers.
+        prepareControllers();
 
         // Load complete. Log the round trip time.
         TobnetLogUtils.info("Engine loaded successfully. Took " +
@@ -106,17 +113,48 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
                 new TimeDifference(pluginUnloadStart, LocalDateTime.now()));
     }
 
-    private void registerBaseControllers() {
+    /**
+     * Creates the Tobnet engine level base controllers which are required for the engine to function.
+     *
+     * @author au5tie
+     */
+    private void setupBaseControllers() {
 
         arenaController = new ArenaController();
-        storageController = new TobnetStorageController();
+        registerController(arenaController);
+
         commandController = new TobnetCommandController();
+        registerController(commandController);
+
+        storageController = new TobnetStorageController();
+        registerController(storageController);
+
+        setupSessionController = new TobnetSetupSessionController();
+        registerController(setupSessionController);
+
         messageController = new TobnetMessageController();
+        registerController(messageController);
     }
 
-    private void registerBaseCommandListeners() {
+    /**
+     * Registers a new {@link TobnetController} with the plugin.
+     *
+     * @param controller Tobnet Controller.
+     * @author au5tie
+     */
+    protected void registerController(TobnetController controller) {
 
-        getCommandController().registerCommandLister(new TobnetBaseArenaCommandListener());
+        controllers.add(controller);
+    }
+
+    /**
+     * Prepares all of the plugin's controllers for use.
+     *
+     * @author au5tie
+     */
+    private void prepareControllers() {
+
+        controllers.forEach(TobnetController::prepare);
     }
 
     /**
@@ -125,7 +163,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
      * @return Command Controller.
      * @author au5tie
      */
-    public final TobnetCommandController getCommandController() {
+    public static final TobnetCommandController getCommandController() {
 
         return commandController;
     }
@@ -150,6 +188,16 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     public static ArenaController getArenaController() {
 
         return arenaController;
+    }
+
+    protected TobnetSetupSessionController getSetupSessionController() {
+
+        return setupSessionController;
+    }
+
+    private void registerBaseCommandListeners() {
+
+        getCommandController().registerCommandLister(new TobnetBaseArenaCommandListener());
     }
 
     public static TobnetGamePlugin getInstance() {

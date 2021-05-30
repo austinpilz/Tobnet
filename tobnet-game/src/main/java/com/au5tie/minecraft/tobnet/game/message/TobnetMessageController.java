@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.message;
 
+import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.message.provider.EnglishMessageProvider;
 import com.au5tie.minecraft.tobnet.game.message.provider.MessageProvider;
@@ -21,7 +22,7 @@ import java.util.Optional;
  * @author au5tie
  */
 @Singleton
-public final class TobnetMessageController {
+public final class TobnetMessageController implements TobnetController {
 
     private final MessageProvider defaultProvider;
     private MessageProvider provider;
@@ -39,6 +40,11 @@ public final class TobnetMessageController {
         defaultProvider = new EnglishMessageProvider();
 
         changeProvider(provider);
+    }
+
+    @Override
+    public void prepare() {
+        //
     }
 
     /**
@@ -67,6 +73,8 @@ public final class TobnetMessageController {
             TobnetEventPublisher.publishEvent(new TobnetMessageProviderChangedEvent(priorProvider, provider));
         }
     }
+
+    // TODO Global method which is the "plugin level" language for admin commands and such.
 
     /**
      * Obtains the requested message. This will obtain the translation for the requested message from the selected provider.

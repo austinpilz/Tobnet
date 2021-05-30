@@ -14,6 +14,7 @@ import java.util.Optional;
  * The Setup Session represents a unique user session for the setup of some object. The session itself manages all of the
  * required steps, user information, and the processing of the outcome. The Setup Session has to be extended by each
  * implementing Setup Session type.
+ *
  * @author au5tie
  */
 @Getter
@@ -49,6 +50,7 @@ public abstract class SetupSession {
 
     /**
      * Registers a new {@link SetupSessionStep} in the list of steps for this session.
+     *
      * @param step Setup Session Step.
      * @author au5tie
      */
@@ -59,6 +61,7 @@ public abstract class SetupSession {
 
     /**
      * Un-registers an existing {@link SetupSessionStep} from the list of steps for this session.
+     *
      * @param step Setup Session Step.
      * @author au5tie
      */
@@ -70,6 +73,7 @@ public abstract class SetupSession {
     /**
      * Prepares the session for invocation. This will configure the session steps and other applicable values required
      * to begin the user's interaction with the session.
+     *
      * @author au5tie
      */
     protected final void prepareSession() {
@@ -81,6 +85,7 @@ public abstract class SetupSession {
     /**
      * Called when the session is beginning for the first time. This will begin the session by displaying the prompt
      * message of the first step to be invoked to the user.
+     *
      * @param context Invocation Context.
      * @author au5tie
      */
@@ -98,6 +103,7 @@ public abstract class SetupSession {
     /**
      * Called when all of the steps in the session have been completed successfully. This is the responsibility to each
      * implementing Setup Session to provide the implementation for what should happen when the session completes.
+     *
      * @author au5tie
      */
     protected void onSessionComplete(SetupSessionStepInvocationContext context) {
@@ -107,6 +113,7 @@ public abstract class SetupSession {
     /**
      * Called when the session is being terminated by the controller. This is designed to allow the session to perform any
      * cleanup operations before being de-registered from the controller and becoming unreachable.
+     *
      * @author au5tie
      */
     protected void onSessionTerminate() {
@@ -116,6 +123,7 @@ public abstract class SetupSession {
     /**
      * This will invoke the next invocable step. This will determine which step is next to be invoked and will notify
      * the step of the invocation request.
+     *
      * @param context Invocation Context.
      * @author au5tie
      */
@@ -149,6 +157,7 @@ public abstract class SetupSession {
     /**
      * Completes the session. This will notify the implementing class that the session is being completed and will then
      * mark the session as being completed.
+     *
      * @param context Invocation Context.
      * @author au5tie
      */
@@ -163,6 +172,7 @@ public abstract class SetupSession {
     /**
      * Determines the next {@link SetupSessionStep} to be invoked. This will determine the next step in order that
      * has not yet been completed.
+     *
      * @return Setup Session Step.
      * @author au5tie
      */
@@ -182,6 +192,7 @@ public abstract class SetupSession {
 
     /**
      * Obtains an {@link SetupSessionStep} by the provided internal name.
+     *
      * @param name Name.
      * @return Setup Session Step.
      * @author au5tie
