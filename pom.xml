@@ -12,11 +12,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <spigot.api.version>1.15</spigot.api.version>
-        <spigot.minor.version>2</spigot.minor.version>
-        <spigot.version>${spigot.api.version}.${spigot.minor.version}-R0.1-SNAPSHOT</spigot.version>
-        <lombok.version>1.18.2</lombok.version>
+        <java.version>16</java.version>
+        <spigot.api.version>1.17</spigot.api.version>
+        <spigot.minor.version>0</spigot.minor.version>
+        <!--<spigot.version>${spigot.api.version}.${spigot.minor.version}-R0.1-SNAPSHOT</spigot.version> -->
+        <spigot.version>${spigot.api.version}-R0.1-SNAPSHOT</spigot.version>
+        <lombok.version>1.18.20</lombok.version>
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <junit.platform.version>1.5.2</junit.platform.version>
         <mockito.version>3.6.28</mockito.version>
@@ -164,8 +165,8 @@
             </activation>
             <dependencies>
                 <dependency>
-                    <groupId>org.bukkit</groupId>
-                    <artifactId>bukkit</artifactId>
+                    <groupId>org.spigotmc</groupId>
+                    <artifactId>spigot-api</artifactId>
                     <version>${spigot.version}</version>
                     <scope>provided</scope>
                 </dependency>
