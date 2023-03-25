@@ -5,10 +5,10 @@ import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepBoundaryOne;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepBoundaryTwo;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepName;
+import com.au5tie.minecraft.tobnet.game.chat.TobnetChatUtils;
 import com.au5tie.minecraft.tobnet.game.session.SetupSession;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStep;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStepInvocationContext;
-import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 

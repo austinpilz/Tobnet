@@ -1,9 +1,10 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.command.TobnetCommandDefaults;
+import com.au5tie.minecraft.tobnet.game.command.TobnetCommandUtils;
 import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
-import com.au5tie.minecraft.tobnet.game.util.TobnetCommandUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,8 +26,18 @@ public class SetupSessionCommandListener extends CommandListener {
 
     @Override
     protected void registerCommands() {
-        //TODO Top Level Command? Inheir from implementing plugin IDK
-        registerCommand("tobsetup");
+        registerCommand(TobnetCommandDefaults.DEFAULT_SETUP_COMMAND);
+    }
+
+    /**
+     * Allows the registration of a custom setup command. This allows the implementing plugin to customize the command
+     * which setup sessions globally will listen on.
+     *
+     * @param topLevelCommand Custom top level setup command.
+     * @author au5tie
+     */
+    protected void registerCustomCommand(String topLevelCommand) {
+        registerCommand(topLevelCommand);
     }
 
     @Override
@@ -99,7 +110,7 @@ public class SetupSessionCommandListener extends CommandListener {
         }
 
         // Request the new session.
-        controller.requestNewSession( context);
+        controller.requestNewSession(context);
     }
 
     /**

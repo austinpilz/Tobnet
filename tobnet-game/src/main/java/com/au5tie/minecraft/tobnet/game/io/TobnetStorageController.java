@@ -6,7 +6,7 @@ import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.io.event.TobnetExternalStorageLoadCompleteEvent;
 import com.au5tie.minecraft.tobnet.game.io.manager.ArenaStorageManager;
 import com.au5tie.minecraft.tobnet.game.io.manager.LocationStorageManager;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.google.inject.Singleton;
 
 import java.io.File;

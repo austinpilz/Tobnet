@@ -15,6 +15,7 @@ public class EnglishMessageProvider extends MessageProvider {
         super(MessageProviderLanguage.ENGLISH_US);
     }
 
+    @Override
     public void registerMessages() {
 
         // Console.
@@ -29,7 +30,7 @@ public class EnglishMessageProvider extends MessageProvider {
         registerMessage(MessageConstants.SETUP_SESSION_COMMAND, "setup");
         registerMessage(MessageConstants.SETUP_SESSION_END_COMMAND, "end");
         registerMessage(MessageConstants.SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR, "Setup session type was not provided. Please verify command syntax.");
-        registerMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR, "end"); //TODO
+        registerMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR, "Setup sessions can only be initiated by in-game players.");
 
 
         // Arena.

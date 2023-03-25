@@ -5,9 +5,9 @@ import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameManager;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
+import com.au5tie.minecraft.tobnet.game.chat.TobnetChatUtils;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineMissingManagerException;
 import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
-import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

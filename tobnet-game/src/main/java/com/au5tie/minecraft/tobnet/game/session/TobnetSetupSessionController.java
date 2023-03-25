@@ -3,6 +3,7 @@ package com.au5tie.minecraft.tobnet.game.session;
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.google.common.collect.ImmutableList;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Constructor;
@@ -10,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * TODO
@@ -35,7 +35,21 @@ public class TobnetSetupSessionController implements TobnetController {
     @Override
     public void prepare() {
         // Register the command listener.
-        TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
+        TobnetGamePlugin.getCommandController().registerCommandListener(commandListener);
+    }
+
+    /**
+     * Registers a custom top level command that the setup sessions will listen on. This will be in addition to
+     * the default setup session command.
+     *
+     * @param topLevelCommand Top level setup command.
+     * @author au5tie
+     */
+    public void registerCustomCommand(String topLevelCommand) {
+        commandListener.registerCustomCommand(topLevelCommand);
+
+        // Since we register a new command after initial listener setup, we have to sync the listener.
+        TobnetGamePlugin.getCommandController().synchronizeCommandListener(commandListener);
     }
 
     /**
@@ -43,9 +57,8 @@ public class TobnetSetupSessionController implements TobnetController {
      * @param sessionClass Setup Session class.
      * @param commandLevelType Command line name for the session type.
      * @author au5tie
-     *
      */
-    public void registerSessionType(Class sessionClass, String commandLevelType) {
+    public void registerSessionType(Class<? extends SetupSession> sessionClass, String commandLevelType) {
 
         supportedSessionTypes.put(commandLevelType.toUpperCase(), sessionClass);
     }
@@ -80,7 +93,7 @@ public class TobnetSetupSessionController implements TobnetController {
      * @param session Arena Setup Session.
      * @author au5tie
      */
-    private final void addSession(SetupSession session) {
+    private void addSession(SetupSession session) {
 
         sessions.put(session.getPlayerUuid(), session);
     }
@@ -91,20 +104,19 @@ public class TobnetSetupSessionController implements TobnetController {
      * @param playerUuid Player UUID.
      * @author au5tie
      */
-    private final void removeSession(String playerUuid) {
+    private void removeSession(String playerUuid) {
 
         sessions.remove(playerUuid);
     }
 
     /**
-     * Returns all of the registered {@link SetupSession}.
+     * Returns all the registered {@link SetupSession}.
      *
      * @return Setup Sessions.
      * @author au5tie
      */
     protected final List<SetupSession> getSessions() {
-
-        return sessions.values().stream().collect(Collectors.toUnmodifiableList());
+        return ImmutableList.copyOf(sessions.values());
     }
 
     /**
@@ -170,9 +182,9 @@ public class TobnetSetupSessionController implements TobnetController {
 
         try {
             Class[] types = {Player.class};
-            Constructor arenaConstructor = sessionClass.orElseThrow(SetupSessionTypeNotSupportedException::new).getConstructor(types);
+            Constructor sessionConstructor = sessionClass.orElseThrow(SetupSessionTypeNotSupportedException::new).getConstructor(types);
             Object[] parameters = {player};
-            return (SetupSession) arenaConstructor.newInstance(parameters);
+            return (SetupSession) sessionConstructor.newInstance(parameters);
         } catch (Exception exception) {
             throw new TobnetEngineException("Encountered an error while attempting to create new setup session", exception);
         }

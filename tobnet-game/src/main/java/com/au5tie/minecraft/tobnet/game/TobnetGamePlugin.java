@@ -6,10 +6,10 @@ import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.guice.TobnetPluginInjector;
 import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
 import com.au5tie.minecraft.tobnet.game.session.TobnetSetupSessionController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -24,6 +24,8 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
     public static TobnetGamePlugin instance;
 
+    // Controllers.
+    private final List<TobnetController> controllers = new ArrayList<>();
     private static ArenaController arenaController;
     private static TobnetCommandController commandController;
     private static TobnetStorageController storageController;
@@ -35,7 +37,6 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     // Guice.
     private Injector injector;
     private final List<Module> modules = new ArrayList<>();
-    private final List<TobnetController> controllers = new ArrayList<>();
 
     public TobnetGamePlugin() {
 
@@ -148,7 +149,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     }
 
     /**
-     * Prepares all of the plugin's controllers for use.
+     * Prepares all the plugin controllers for use.
      *
      * @author au5tie
      */
@@ -197,7 +198,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
     private void registerBaseCommandListeners() {
 
-        getCommandController().registerCommandLister(new TobnetBaseArenaCommandListener());
+        getCommandController().registerCommandListener(new TobnetBaseArenaCommandListener());
     }
 
     public static TobnetGamePlugin getInstance() {

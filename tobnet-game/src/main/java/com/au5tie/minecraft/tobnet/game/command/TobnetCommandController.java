@@ -4,15 +4,14 @@ import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
-import org.apache.commons.lang.StringUtils;
+import com.google.common.collect.ImmutableSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Tobnet Command Controller acts as the interface layer between the server API (Spigot) and the implementing game code.
@@ -23,7 +22,7 @@ import java.util.Map;
  */
 public final class TobnetCommandController implements CommandExecutor, TobnetController {
 
-    private Map<String, List<CommandListener>> commands = new HashMap<>();
+    private final Set<CommandListener> commandListeners = new HashSet<>();
 
     @Override
     public void prepare() {
@@ -37,46 +36,31 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
      * @param listener Command Listener.
      * @author au5tie
      */
-    public final void registerCommandLister(CommandListener listener) {
-        // Register each of the listener's supported commands.
-        listener.getSupportedCommands().forEach(command -> registerCommand(listener, command));
+    public void registerCommandListener(CommandListener listener) {
+        commandListeners.add(listener);
+
+        synchronizeCommandListener(listener);
     }
 
     /**
-     * Registers the command with the {@link CommandListener}. This will register the command with Bukkit so that the server
-     * will route the command to this controller. This will also register the listener as interested in the command with
-     * this controller which will ensure the command gets routed to that listener.
+     * Synchronizes the {@link CommandListener} with the server implementation by registering all top level supported
+     * commands as being serviced by this controller. This is what ensures
      *
      * @param listener Command Listener.
-     * @param command Command.
      * @author au5tie
      */
-    private final void registerCommand(CommandListener listener, String command) {
+    public void synchronizeCommandListener(CommandListener listener) {
 
-        if (StringUtils.isBlank(command)) {
-            // The command attempting to be registered is blank.
-            throw new TobnetEngineException(listener.getClass().getSimpleName() +
-                    " listener attempted to register a null command.");
-        }
+        for (String command : listener.getSupportedCommands()) {
 
-        // Convert the command to lower case.
-        command = command.toLowerCase();
+            PluginCommand pluginCommand = TobnetGamePlugin.getInstance().getCommand(command);
 
-        // Register the command with Bukkit to route to this controller.
-        TobnetGamePlugin.getInstance().getCommand(command).setExecutor(this);
+            if (pluginCommand == null) {
 
-        if (commands.containsKey(command)) {
-            // The command is already registered, add this listener as an additionally interested party.
-            commands.get(command).add(listener);
-        } else {
-            // This command has not yet been registered.
-            List<CommandListener> listeners = new ArrayList<>();
-
-            // Add this listener to the list of listeners linked to this command.
-            listeners.add(listener);
-
-            // Add this registered command to our map.
-            commands.put(command, listeners);
+                throw new TobnetEngineException("Command listener " + listener.getClass().getSimpleName() + " attempted to register command " + command + " but it is not registered at the server level.");
+            } else {
+                pluginCommand.setExecutor(this);
+            }
         }
     }
 
@@ -89,11 +73,22 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
      */
     public boolean isRegisteredCommand(String command) {
 
-        return commands.containsKey(command);
+        return !getSubscribedListeners(command).isEmpty();
     }
 
     /**
-     * Performs command execution handling when a command is invoked by a user/console. This will find all of the linked
+     * Returns all the subscribed {@link CommandListener}s for the provided top level command.
+     *
+     * @param command Top level command.
+     * @return All subscribed Command Listeners, if any.
+     * @author au5tie
+     */
+    private Set<CommandListener> getSubscribedListeners(String command) {
+        return commandListeners.stream().filter(listener -> listener.isSupportedCommand(command.toLowerCase())).collect(ImmutableSet.toImmutableSet());
+    }
+
+    /**
+     * Performs command execution handling when a command is invoked by a user/console. This will find all the linked
      * {@link CommandListener}s for the command and allow each one to handle the command invocation.
      *
      * If any listeners respond with false, meaning the handling encountered an error, the command handling will stop and
@@ -111,7 +106,7 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
 
         if (isRegisteredCommand(command.getName().toLowerCase())) {
             // Obtain the list of interested listeners.
-            List<CommandListener> listeners = commands.get(command.getName().toLowerCase());
+            Set<CommandListener> listeners = getSubscribedListeners(command.getName());
 
             for (CommandListener listener : listeners) {
                 // Invoke the listener's command handling.

@@ -2,10 +2,10 @@ package com.au5tie.minecraft.tobnet.game.message;
 
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.message.provider.EnglishMessageProvider;
 import com.au5tie.minecraft.tobnet.game.message.provider.MessageProvider;
 import com.au5tie.minecraft.tobnet.game.message.provider.TobnetMessageProviderChangedEvent;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.google.inject.Singleton;
 
 import java.text.MessageFormat;
@@ -52,7 +52,7 @@ public final class TobnetMessageController implements TobnetController {
      * @return Message Provider.
      * @author au5tie
      */
-    public final MessageProvider getProvider() {
+    public MessageProvider getProvider() {
 
         return provider;
     }
@@ -62,7 +62,7 @@ public final class TobnetMessageController implements TobnetController {
      * @param provider Message Provider.
      * @author au5tie
      */
-    public final void changeProvider(MessageProvider provider) {
+    public void changeProvider(MessageProvider provider) {
 
         MessageProvider priorProvider = this.provider;
 
@@ -86,7 +86,7 @@ public final class TobnetMessageController implements TobnetController {
      * @return Translated message with injected arguments.
      * @author au5tie
      */
-    public final String getMessage(String messageName, String... arguments) {
+    public String getMessage(String messageName, String... arguments) {
 
         // Obtain the message from our selected provider.
         Optional<String> message = provider.getMessage(messageName);

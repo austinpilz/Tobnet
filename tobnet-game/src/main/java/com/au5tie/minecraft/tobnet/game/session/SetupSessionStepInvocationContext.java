@@ -1,5 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
+import com.google.common.collect.ImmutableList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,5 +34,9 @@ public class SetupSessionStepInvocationContext {
     public final boolean hasPlayer() {
 
         return player != null;
+    }
+
+    public List<String> getCommandArguments() {
+        return ImmutableList.copyOf(commandArguments);
     }
 }

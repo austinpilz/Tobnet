@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 
 /**
- * This class represents a distinct step which will can be registered to be invoked during a setup session. The step is
+ * This class represents a distinct step which can be registered to be invoked during a setup session. The step is
  * designed to action as an abstract setup step which the implementing plugin will extend and tailor to the needs of their
  * setup sessions.
  *
@@ -23,7 +23,6 @@ public abstract class SetupSessionStep {
     private final int order;
     private boolean complete;
     private SetupSession setupSession;
-
     private String displayName;
     private ChatColor promptBorderColor;
 

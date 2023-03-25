@@ -1,7 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.io;
 
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

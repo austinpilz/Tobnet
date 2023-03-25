@@ -13,8 +13,8 @@ import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskMode;
 import com.au5tie.minecraft.tobnet.game.arena.task.ArenaTaskType;
 import com.au5tie.minecraft.tobnet.game.event.TobnetEventPublisher;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;

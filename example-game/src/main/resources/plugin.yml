@@ -12,6 +12,8 @@ commands:
     description: Friday the 13th Player Commands.
   tobnet:
     description: Tobnet Engine admin command.
+  tobsetup:
+    description: TEMP
 permissions:
   Pie.*:
     description: Gives access to all commands
