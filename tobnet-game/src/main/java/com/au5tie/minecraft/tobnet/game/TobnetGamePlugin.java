@@ -23,14 +23,13 @@ import java.util.List;
 public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
     public static TobnetGamePlugin instance;
-
     private static ArenaController arenaController;
     private static TobnetCommandController commandController;
     private static TobnetStorageController storageController;
     private static TobnetSetupSessionController setupSessionController;
     private static TobnetMessageController messageController;
-
-    public static String chatPrefix = "[Tobnet] ";
+    public static final String chatPrefix = "[Tobnet] ";
+    public static final String engineCommand = "tob";
 
     // Guice.
     private Injector injector;
@@ -118,7 +117,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
      *
      * @author au5tie
      */
-    private void setupBaseControllers() {
+    private final void setupBaseControllers() {
 
         arenaController = new ArenaController();
         registerController(arenaController);
@@ -129,11 +128,21 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
         storageController = new TobnetStorageController();
         registerController(storageController);
 
-        setupSessionController = new TobnetSetupSessionController();
+        setupSessionController = createSetupSessionController();
         registerController(setupSessionController);
 
         messageController = new TobnetMessageController();
         registerController(messageController);
+    }
+
+    /**
+     * Creates the {@link TobnetSetupSessionController} which will control and manage all user setup sessions in the engine.
+     *
+     * @return Setup Session Controller.
+     * @author au5tie
+     */
+    protected TobnetSetupSessionController createSetupSessionController() {
+        return new TobnetSetupSessionController(engineCommand);
     }
 
     /**
@@ -148,7 +157,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
     }
 
     /**
-     * Prepares all of the plugin's controllers for use.
+     * Prepares all the plugin's controllers for use.
      *
      * @author au5tie
      */
@@ -190,7 +199,7 @@ public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
         return arenaController;
     }
 
-    protected TobnetSetupSessionController getSetupSessionController() {
+    public static TobnetSetupSessionController getSetupSessionController() {
 
         return setupSessionController;
     }

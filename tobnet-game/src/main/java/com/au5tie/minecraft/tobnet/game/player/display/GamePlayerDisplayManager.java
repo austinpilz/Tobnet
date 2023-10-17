@@ -35,7 +35,7 @@ public class GamePlayerDisplayManager {
      * @return Game Player that the manager belongs to.
      * @author au5tie
      */
-    private final GamePlayer getPlayer() {
+    private GamePlayer getPlayer() {
 
         return player;
     }
@@ -46,7 +46,7 @@ public class GamePlayerDisplayManager {
      * @param component Game Player Display Component.
      * @author au5tie
      */
-    private final void addComponent(GamePlayerDisplayComponent component) {
+    private void addComponent(GamePlayerDisplayComponent component) {
 
         displayComponents.put(component.getName(), component);
     }
@@ -57,7 +57,7 @@ public class GamePlayerDisplayManager {
      * @param component Game Player Display Component.
      * @author au5tie
      */
-    private final void removeComponent(GamePlayerDisplayComponent component) {
+    private void removeComponent(GamePlayerDisplayComponent component) {
 
         displayComponents.remove(component.getName());
     }
@@ -68,7 +68,7 @@ public class GamePlayerDisplayManager {
      * @author au5tie
      */
     public void destroyComponents() {
-        // Destroy all of the components.
+
         displayComponents.values().forEach(GamePlayerDisplayComponent::destroyComponent);
         displayComponents.clear();
     }
@@ -201,7 +201,7 @@ public class GamePlayerDisplayManager {
         List<GamePlayerDisplayComponent> shouldBeVisibleComponents = getShouldBeVisibleComponentsByLocation(location);
 
         if (currentlyVisibleComponent.isPresent()) {
-            // Remove the currently visible one so we don't compare against it.
+            // Remove the currently visible one, so we don't compare against it.
             shouldBeVisibleComponents.remove(currentlyVisibleComponent.get());
         }
 
@@ -218,7 +218,7 @@ public class GamePlayerDisplayManager {
                 highestPriorityComponent.displayComponent();
             }
         } else if (highestPriorityComponent != null) {
-            // There is no currently visible component to the user but we have one that should be.
+            // There is no currently visible component to the user, but we have one that should be.
             highestPriorityComponent.displayComponent();
         }
     }

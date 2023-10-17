@@ -25,6 +25,7 @@ public class SetupSessionStepInvocationContext {
     private String command;
     private String sessionType;
     private List<String> commandArguments;
+    private String label;
 
     /**
      * @return If the context has a player associated to it.

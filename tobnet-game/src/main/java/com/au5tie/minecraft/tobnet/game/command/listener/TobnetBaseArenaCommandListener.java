@@ -22,7 +22,7 @@ import java.util.Optional;
 public class TobnetBaseArenaCommandListener extends CommandListener {
 
     @Override
-    protected void registerCommands() {
+    public void registerCommands() {
 
         registerCommand("tobnet");
     }

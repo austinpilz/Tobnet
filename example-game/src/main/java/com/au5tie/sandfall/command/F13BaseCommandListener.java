@@ -16,8 +16,8 @@ import java.util.Optional;
 public class F13BaseCommandListener extends CommandListener {
 
     @Override
-    protected void registerCommands() {
-        registerCommand("f13");
+    public void registerCommands() {
+        registerCommand("sf");
     }
 
     @Override

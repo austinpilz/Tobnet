@@ -15,6 +15,9 @@ public class MessageConstants {
     public static final String SETUP_SESSION_END_COMMAND = "setup_command_end_name";
     public static final String SETUP_SESSION_NON_PLAYER_INVOKE_ERROR = "setup_command_nonplayer_invoke_error";
     public static final String SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR = "setup_command_type_missing_cli_error";
+    public static final String SETUP_SESSION_TYPE_UNSUPPORTED_ERROR = "setup_command_type_unsupported";
+    public static final String SETUP_SESSION_ENDED = "setup_session_ended";
+    public static final String SETUP_SESSION_END_MISSING = "setup_session_end_missing";
 
     // Arena.
     public static final String ARENA_CONSOLE_HEADER = "arena_console_header";

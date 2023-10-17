@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 
 public class TobnetBasePlayerCommandListener extends CommandListener {
     @Override
-    protected void registerCommands() {
+    public void registerCommands() {
 
     }
 

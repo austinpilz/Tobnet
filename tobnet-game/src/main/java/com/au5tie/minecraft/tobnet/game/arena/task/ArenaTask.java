@@ -90,7 +90,7 @@ public final class ArenaTask {
      * @return If the task is scheduled with the server scheduler.
      * @author au5tie
      */
-    public final boolean isScheduled() {
+    public boolean isScheduled() {
 
         if (taskId > -1) {
             return Bukkit.getScheduler().isCurrentlyRunning(taskId) || Bukkit.getScheduler().isQueued(taskId);

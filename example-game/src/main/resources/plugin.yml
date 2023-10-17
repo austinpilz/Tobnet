@@ -8,8 +8,8 @@ load: POSTWORLD
 softdepend: [Multiverse-Core, Multiworld, HolographicDisplays, ActionBarAPI, LanguageAPI, SidebarAPI, ProtocolLib, CorpseReborn, CustomSoundManagerAPI]
 api-version: 1.16
 commands:
-  f13:
-    description: Friday the 13th Player Commands.
+  sf:
+    description: SandFall Commands.
   tobnet:
     description: Tobnet Engine admin command.
 permissions:

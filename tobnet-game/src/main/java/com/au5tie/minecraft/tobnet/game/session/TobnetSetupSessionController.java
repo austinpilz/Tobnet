@@ -1,6 +1,7 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
 import org.bukkit.entity.Player;
@@ -13,7 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * TODO
+ * The Setup Session Controller manages and handles all the setup sessions occurring in the plugin. It supports an unlimited
+ * number of session types and will, once registered, be able to instantiate custom setup session types.
  *
  * @author au5tie
  */
@@ -23,19 +25,30 @@ public class TobnetSetupSessionController implements TobnetController {
     private final Map<String, Class> supportedSessionTypes;
     private final SetupSessionCommandListener commandListener;
 
-    public TobnetSetupSessionController() {
+    public TobnetSetupSessionController(String command) {
 
         sessions = new HashMap<>();
         supportedSessionTypes = new HashMap<>();
 
         // Command Listener.
-        commandListener = new SetupSessionCommandListener(this);
+        commandListener = new SetupSessionCommandListener(this, command);
     }
 
     @Override
     public void prepare() {
         // Register the command listener.
         TobnetGamePlugin.getCommandController().registerCommandLister(commandListener);
+    }
+
+    /**
+     * Returns the {@link CommandListener} used for all setup sessions.
+     *
+     * @return The command listener used for setup sessions.
+     * @author au5tie
+     */
+    public CommandListener getCommandListener() {
+
+        return commandListener;
     }
 
     /**
@@ -97,7 +110,7 @@ public class TobnetSetupSessionController implements TobnetController {
     }
 
     /**
-     * Returns all of the registered {@link SetupSession}.
+     * Returns all the registered {@link SetupSession}.
      *
      * @return Setup Sessions.
      * @author au5tie
@@ -235,6 +248,28 @@ public class TobnetSetupSessionController implements TobnetController {
     public final boolean doesUserHaveExistingSession(String playerUuid) {
 
         return getUserSession(playerUuid).isPresent();
+    }
+
+    /**
+     * Obtains the type of the setup session that user has in progress, if there is one.
+     *
+     * @param playerUuid Player UUID.
+     * @return In progress setup session type.
+     * @author au5tie
+     */
+    public final Optional<String> getUserExistingSessionType(String playerUuid) {
+
+        Optional<SetupSession> userSession = getUserSession(playerUuid);
+
+        if (userSession.isPresent()) {
+            Optional<Map.Entry<String, Class>> sessionClassEntry = supportedSessionTypes.entrySet().stream().filter(entry -> entry.getValue().equals(userSession.get().getClass())).findAny();
+
+            if (sessionClassEntry.isPresent()) {
+                return Optional.of(sessionClassEntry.get().getKey());
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**

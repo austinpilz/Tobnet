@@ -1,15 +1,17 @@
 package com.au5tie.sandfall.arena.setup;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
-import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepBoundaryOne;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepBoundaryTwo;
 import com.au5tie.minecraft.tobnet.game.arena.setup.step.ArenaSetupSessionStepName;
 import com.au5tie.minecraft.tobnet.game.session.SetupSession;
+import com.au5tie.minecraft.tobnet.game.session.SetupSessionChatUtils;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStep;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStepInvocationContext;
 import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
+import com.au5tie.sandfall.arena.SandFallArena;
 import lombok.Getter;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -68,7 +70,7 @@ public class SandFallArenaSetupSession extends SetupSession {
     @Override
     protected void onSessionComplete(SetupSessionStepInvocationContext context) {
 
-        // Link back to all of the steps that were completed during the session.
+        // Link back to all the steps that were completed during the session.
         ArenaSetupSessionStepName nameStep = (ArenaSetupSessionStepName)getStepByName("arena-name").get();
         ArenaSetupSessionStepBoundaryOne boundaryOneStep = (ArenaSetupSessionStepBoundaryOne)getStepByName("boundary-one").get();
         ArenaSetupSessionStepBoundaryTwo boundaryTwoStep = (ArenaSetupSessionStepBoundaryTwo)getStepByName("boundary-two").get();
@@ -76,24 +78,12 @@ public class SandFallArenaSetupSession extends SetupSession {
         // Let's connect back to our custom step and grab the message we stored in it.
         CustomSetupSessionStepExample customStep = (CustomSetupSessionStepExample)getStepByName("custom-example-name").get();
 
-        // TODO AUSTIN HERE - You left off coding the CustomStep data fetch. Prob need some helper methods to grab params
-        // TODO at positions from the CLI.
-
-
-        //TODO Figure out how arena setup controller will pick which command to register under
-
-
-
-
-
-
-
-
-
-        // TODO Need to figure out consistency in creating the object.
+        // Repeat the word the player provided back to them to prove our nifty step was able to collect & store it.
+        TobnetChatUtils.sendPlayerMessage(context.getPlayer(), "The custom message you entered was " +
+                SetupSessionChatUtils.generateColoredChatSegment(customStep.getCustomMessage(), ChatColor.DARK_PURPLE, ChatColor.WHITE, true));
 
         // Create the arena.
-        TobnetArena arena = null; //TODO Reflection? Or does setup have to be in their code?!
+        SandFallArena arena = new SandFallArena(nameStep.getArenaName());
 
         // Configure the boundaries.
         arena.setBoundaryOne(boundaryOneStep.getBoundaryLocation());

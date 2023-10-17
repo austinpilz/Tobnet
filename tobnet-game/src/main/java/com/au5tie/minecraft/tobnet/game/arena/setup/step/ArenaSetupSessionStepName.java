@@ -21,7 +21,8 @@ public class ArenaSetupSessionStepName extends SetupSessionStep {
     protected void displayPromptBody(SetupSessionStepInvocationContext context) {
         // Send the instructions on how to configure the name.
         context.getPlayer().sendMessage("To configure the name of the arena, execute the command " +
-                SetupSessionChatUtils.generateColoredChatSegment("/tobsetup arena [arenaName]", ChatColor.GREEN, ChatColor.WHITE, true));
+                SetupSessionChatUtils.generateColoredChatSegment("/" + TobnetGamePlugin.getSetupSessionController().getCommandListener().getFirstSupportedCommand().orElse("UNKNOWN")
+                        + " setup arena [arenaName]", ChatColor.GREEN, ChatColor.WHITE, true));
     }
 
     @Override
@@ -52,6 +53,7 @@ public class ArenaSetupSessionStepName extends SetupSessionStep {
 
     /**
      * Returns the Arena Name stored in the step.
+     *
      * @return Arena Name.
      * @author au5tie
      */

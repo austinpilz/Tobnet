@@ -27,7 +27,6 @@ public class ArenaSetupSessionStepBoundaryOne extends SetupSessionStep {
 
     @Override
     protected boolean invoke(SetupSessionStepInvocationContext context) {
-
         // Obtain the player's current location as the boundary position.
         this.boundaryLocation = context.getPlayer().getLocation();
 

@@ -11,7 +11,6 @@ public class ArenaWaitingRoomManager extends ArenaManager {
     private final ArenaWaitingRoomConfiguration configuration;
 
     public ArenaWaitingRoomManager(TobnetArena arena, ArenaWaitingRoomConfiguration configuration) {
-
         super(arena);
 
         this.configuration = configuration;
@@ -19,7 +18,6 @@ public class ArenaWaitingRoomManager extends ArenaManager {
 
     @Override
     public ArenaManagerType getType() {
-
         return ArenaManagerType.WAITING_ROOM;
     }
 
@@ -30,6 +28,6 @@ public class ArenaWaitingRoomManager extends ArenaManager {
 
     @Override
     public void destroyManager() {
-
+        //
     }
 }

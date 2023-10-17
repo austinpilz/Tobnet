@@ -4,6 +4,8 @@ import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineException;
+import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,9 +39,18 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
      * @param listener Command Listener.
      * @author au5tie
      */
-    public final void registerCommandLister(CommandListener listener) {
-        // Register each of the listener's supported commands.
-        listener.getSupportedCommands().forEach(command -> registerCommand(listener, command));
+    public void registerCommandLister(CommandListener listener) {
+        // Invoke the listener's method to register all of it's configured commands within itself before we do anything
+        // globally. This originally as done via constructor but didn't support param-based commands, so moved here.
+        listener.registerCommands();
+
+        if (CollectionUtils.isNotEmpty(listener.getSupportedCommands())) {
+            // Register each of the listener's supported commands.
+            listener.getSupportedCommands().forEach(command -> registerCommand(listener, command));
+        } else {
+            TobnetLogUtils.warn(listener.getClass().getSimpleName() + " was registered with the command controller but had " +
+                    "no registered commands to register globally.");
+        }
     }
 
     /**
@@ -51,7 +62,7 @@ public final class TobnetCommandController implements CommandExecutor, TobnetCon
      * @param command Command.
      * @author au5tie
      */
-    private final void registerCommand(CommandListener listener, String command) {
+    private void registerCommand(CommandListener listener, String command) {
 
         if (StringUtils.isBlank(command)) {
             // The command attempting to be registered is blank.

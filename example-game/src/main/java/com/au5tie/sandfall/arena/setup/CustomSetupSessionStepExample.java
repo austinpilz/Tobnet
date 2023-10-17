@@ -4,8 +4,18 @@ import com.au5tie.minecraft.tobnet.game.session.SetupSession;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionChatUtils;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStep;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStepInvocationContext;
+import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import org.bukkit.ChatColor;
 
+/**
+ * This CustomSetupSessionStepExample demonstrates how you can create your own custom {@link SetupSessionStep} to fully
+ * customize your setup session. This example setup is designed to prompt the user to provide a random name/string/etc. via
+ * the CLI. Once the user enters the command line argument with the name, we'll extract it and store it within this step.
+ * Once the overall setup session completes, the session will refer back to us in this step to grab the name to use for
+ * creation of the arena.
+ *
+ * @author au5tie
+ */
 public class CustomSetupSessionStepExample extends SetupSessionStep {
 
     private String ourCustomMessage;
@@ -17,8 +27,16 @@ public class CustomSetupSessionStepExample extends SetupSessionStep {
 
     @Override
     protected boolean invoke(SetupSessionStepInvocationContext context) {
-        //TODO
-        return false;
+
+       if (context.getCommandArguments().size() >= 3) {
+           // The user provided an argument with an example value, we can store that!
+           ourCustomMessage = context.getCommandArguments().get(2);
+           return true;
+       } else {
+           // The user did not provide enough arguments with the requested value.
+           displayPromptBody(context);
+           return false;
+       }
     }
 
     /**
@@ -34,8 +52,8 @@ public class CustomSetupSessionStepExample extends SetupSessionStep {
     @Override
     protected void displayPromptBody(SetupSessionStepInvocationContext context) {
 
-        context.getPlayer().sendMessage("Configure a custom message for this example by executing the command " +
-                SetupSessionChatUtils.generateColoredChatSegment("/sf setup arena [myMessage]", ChatColor.GREEN, ChatColor.WHITE, true));
+        TobnetChatUtils.sendPlayerMessage(context.getPlayer(), "Configure a custom message for this example by executing the command " +
+                SetupSessionChatUtils.generateColoredChatSegment("/sf setup arena [myMessage]", ChatColor.GREEN, ChatColor.WHITE, true), false);
     }
 
     /**

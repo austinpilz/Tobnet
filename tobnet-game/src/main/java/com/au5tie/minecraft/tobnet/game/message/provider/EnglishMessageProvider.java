@@ -29,8 +29,10 @@ public class EnglishMessageProvider extends MessageProvider {
         registerMessage(MessageConstants.SETUP_SESSION_COMMAND, "setup");
         registerMessage(MessageConstants.SETUP_SESSION_END_COMMAND, "end");
         registerMessage(MessageConstants.SETUP_SESSION_TYPE_COMMAND_MISSING_ERROR, "Setup session type was not provided. Please verify command syntax.");
-        registerMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR, "end"); //TODO
-
+        registerMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR, "Console-based setup sessions are not supported. Sessions must be run by a player in-game.");
+        registerMessage(MessageConstants.SETUP_SESSION_TYPE_UNSUPPORTED_ERROR, "The provided session type {0} is not a supported session type.");
+        registerMessage(MessageConstants.SETUP_SESSION_ENDED, "Your existing {0} setup session has been ended.");
+        registerMessage(MessageConstants.SETUP_SESSION_END_MISSING, "You do not have an existing setup session in progress.");
 
         // Arena.
         registerMessage(MessageConstants.ARENA_CONSOLE_HEADER, "-- Arenas --");

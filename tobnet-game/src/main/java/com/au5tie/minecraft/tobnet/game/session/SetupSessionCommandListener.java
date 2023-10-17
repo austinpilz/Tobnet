@@ -2,8 +2,9 @@ package com.au5tie.minecraft.tobnet.game.session;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import com.au5tie.minecraft.tobnet.game.command.listener.CommandListener;
+import com.au5tie.minecraft.tobnet.game.command.util.TobnetCommandUtils;
 import com.au5tie.minecraft.tobnet.game.message.MessageConstants;
-import com.au5tie.minecraft.tobnet.game.util.TobnetCommandUtils;
+import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,22 +13,29 @@ import org.bukkit.entity.Player;
 import java.util.Arrays;
 
 /**
+ * The Setup Session Command Listener receives setup commands executed on the server and handles the proper routing and
+ * session behavior in conjunction with the {@link TobnetSetupSessionController}.
  *
  * Command Line Structure: /[topLevelCommand] setup [sessionType] [args...]
  *                                            [0]   [1]           [n]
  *
- * /[topLevelCommand] setup end
+ * End Session Structure: /[topLevelCommand] setup end
+ *
+ * @author au5tie
  */
 @AllArgsConstructor
 public class SetupSessionCommandListener extends CommandListener {
 
     private final TobnetSetupSessionController controller;
+    private final String command;
 
     @Override
-    protected void registerCommands() {
-        //TODO Top Level Command? Inheir from implementing plugin IDK
-        registerCommand("tobsetup");
+    public void registerCommands() {
+        // Register the listener to receive command invocations.
+        registerCommand(command);
     }
+
+    // TODO Need to check if supported before trying, else crash
 
     @Override
     public boolean onCommandExecuted(CommandSender sender, Command command, String label, String[] args) {
@@ -98,8 +106,14 @@ public class SetupSessionCommandListener extends CommandListener {
             controller.requestSessionTermination(context.getPlayer().getUniqueId().toString());
         }
 
-        // Request the new session.
-        controller.requestNewSession( context);
+        if (controller.isSessionTypeSupported(context.getSessionType())) {
+            // Request the new session.
+            controller.requestNewSession(context);
+        } else {
+            // Session type is not supported.
+            TobnetChatUtils.sendPlayerMessage(context.getPlayer(),
+                    TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_TYPE_UNSUPPORTED_ERROR, context.getSessionType()));
+        }
     }
 
     /**
@@ -114,6 +128,11 @@ public class SetupSessionCommandListener extends CommandListener {
         if (controller.doesUserHaveExistingSession(context.getPlayer().getUniqueId().toString())) {
             // The user has an existing session, terminate it.
             controller.requestSessionTermination(context.getPlayer().getUniqueId().toString());
+
+            TobnetChatUtils.sendPlayerMessage(context.getPlayer(), TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_ENDED, controller.getUserExistingSessionType(context.getPlayer().getUniqueId().toString()).orElse("(unknown)")));
+        } else {
+            // The user does not have an ongoing session, nothing to end.
+            TobnetChatUtils.sendPlayerMessage(context.getPlayer(), TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_END_MISSING));
         }
     }
 
@@ -126,7 +145,7 @@ public class SetupSessionCommandListener extends CommandListener {
      */
     private void handleNonPlayerSender(CommandSender sender) {
 
-        sender.sendMessage(TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR));
+        TobnetChatUtils.sendCommandSenderMessage(sender, TobnetGamePlugin.getMessageController().getMessage(MessageConstants.SETUP_SESSION_NON_PLAYER_INVOKE_ERROR));
     }
 
     /**
@@ -136,7 +155,7 @@ public class SetupSessionCommandListener extends CommandListener {
      * @param command Command.
      * @param label Command Label.
      * @param args Arguments.
-     * @return Setup Session Step Inovcation Context.
+     * @return Setup Session Step Invocation Context.
      * @author au5tie
      */
     private SetupSessionStepInvocationContext buildContext(CommandSender sender, Command command, String label, String[] args) {
@@ -146,6 +165,7 @@ public class SetupSessionCommandListener extends CommandListener {
                 .player((Player)sender)
                 .command(command.getName())
                 .commandArguments(Arrays.asList(args))
+                .label(label)
                 .build();
 
         if (args.length > 1) {

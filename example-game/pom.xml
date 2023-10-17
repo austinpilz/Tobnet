@@ -24,7 +24,7 @@
         </repository>
         <repository>
             <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
+            <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
         </repository>
     </repositories>
 
@@ -102,7 +102,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
                 <configuration>
-                    <outputDirectory>C:\Users\austi\Desktop\MC Server\plugins</outputDirectory>
+                    <!--<outputDirectory>C:\Users\austi\Desktop\MC Server\plugins</outputDirectory>-->
+                    <outputDirectory>/Users/austinpilz/Desktop/MC Server/plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
