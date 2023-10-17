@@ -3,7 +3,7 @@ package com.au5tie.minecraft.tobnet.game.arena.chest;
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.event.ArenaEventHandler;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;

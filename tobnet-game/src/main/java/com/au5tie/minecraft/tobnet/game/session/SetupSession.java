@@ -1,6 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.session;
 
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import lombok.Getter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * The Setup Session represents a unique user session for the setup of some object. The session itself manages all of the
+ * The Setup Session represents a unique user session for the setup of some object. The session itself manages all the
  * required steps, user information, and the processing of the outcome. The Setup Session has to be extended by each
  * implementing Setup Session type.
  *
@@ -41,12 +41,20 @@ public abstract class SetupSession {
     /**
      * Configures the {@link SetupSessionStep}s to be invoked during this session.
      *
-     * This is the responsibility of each implementing Setup Session to provide configuration/definition for all of the
+     * This is the responsibility of each implementing Setup Session to provide configuration/definition for all the
      * steps in that session.
      *
      * @author au5tie
      */
     protected abstract void configureSteps();
+
+    /**
+     * Called when all the steps in the session have been completed successfully.
+     *
+     * @author au5tie
+     */
+    protected abstract void onSessionComplete(SetupSessionStepInvocationContext context);
+
 
     /**
      * Registers a new {@link SetupSessionStep} in the list of steps for this session.
@@ -97,17 +105,6 @@ public abstract class SetupSession {
             // Prompt the first step.
             step.get().displayPrompt(context);
         }
-    }
-
-
-    /**
-     * Called when all of the steps in the session have been completed successfully. This is the responsibility to each
-     * implementing Setup Session to provide the implementation for what should happen when the session completes.
-     *
-     * @author au5tie
-     */
-    protected void onSessionComplete(SetupSessionStepInvocationContext context) {
-        //
     }
 
     /**

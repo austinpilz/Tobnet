@@ -10,7 +10,7 @@ import com.au5tie.minecraft.tobnet.game.exception.TobnetEngineMissingManagerExce
 import com.au5tie.minecraft.tobnet.game.io.StorageManager;
 import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
 import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

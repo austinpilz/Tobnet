@@ -1,11 +1,11 @@
 package com.au5tie.minecraft.tobnet.game.arena.setup.step;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
+import com.au5tie.minecraft.tobnet.game.chat.TobnetChatUtils;
 import com.au5tie.minecraft.tobnet.game.session.SetupSession;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionChatUtils;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStep;
 import com.au5tie.minecraft.tobnet.game.session.SetupSessionStepInvocationContext;
-import com.au5tie.minecraft.tobnet.game.util.TobnetChatUtils;
 import org.bukkit.ChatColor;
 
 public class ArenaSetupSessionStepName extends SetupSessionStep {

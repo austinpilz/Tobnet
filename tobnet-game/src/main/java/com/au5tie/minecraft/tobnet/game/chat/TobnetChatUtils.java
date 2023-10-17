@@ -1,4 +1,4 @@
-package com.au5tie.minecraft.tobnet.game.util;
+package com.au5tie.minecraft.tobnet.game.chat;
 
 import com.au5tie.minecraft.tobnet.game.TobnetGamePlugin;
 import org.bukkit.command.CommandSender;

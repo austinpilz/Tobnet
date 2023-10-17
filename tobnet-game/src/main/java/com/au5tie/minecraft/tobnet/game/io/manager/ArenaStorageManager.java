@@ -5,7 +5,7 @@ import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.io.StorageManager;
 import com.au5tie.minecraft.tobnet.game.io.StorageManagerType;
 import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 

@@ -19,7 +19,7 @@ public class SandFallPlugin extends TobnetGamePlugin {
     public void enablePlugin() {
 
         // Create the base F13 command listener for player interface. TODO REVIEW
-        getCommandController().registerCommandLister(new F13BaseCommandListener());
+        getCommandController().registerCommandListener(new F13BaseCommandListener());
 
         configureSetupSessions();
     }

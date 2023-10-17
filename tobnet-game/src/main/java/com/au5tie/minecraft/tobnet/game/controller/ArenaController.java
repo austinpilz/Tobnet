@@ -2,7 +2,7 @@ package com.au5tie.minecraft.tobnet.game.controller;
 
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerUtils;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.google.inject.Singleton;
 import org.bukkit.Location;
 
