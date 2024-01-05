@@ -15,7 +15,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TobnetArenaStatusPreChangeEvent extends TobnetCustomEvent {
 
-    private final TobnetArena arena;
-    private final ArenaGameStatus priorStatus;
-    private final ArenaGameStatus newStatus;
+  private final TobnetArena arena;
+  private final ArenaGameStatus priorStatus;
+  private final ArenaGameStatus newStatus;
 }

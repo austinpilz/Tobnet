@@ -1,5 +1,8 @@
 package com.au5tie.minecraft.tobnet.game.arena.chat;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.au5tie.minecraft.tobnet.game.arena.chat.handler.OpenChatHandler;
 import com.au5tie.minecraft.tobnet.game.arena.chat.handler.TobnetChatHandler;
 import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameManager;
@@ -7,6 +10,7 @@ import com.au5tie.minecraft.tobnet.game.arena.game.ArenaGameStatus;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerTest;
 import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
+import java.util.HashSet;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,98 +23,101 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 @ExtendWith(MockitoExtension.class)
 @RunWith(JUnitPlatform.class)
 class ArenaChatManagerTest extends ArenaManagerTest {
 
-    private ArenaChatManager manager;
+  private ArenaChatManager manager;
 
-    @Mock
-    private ArenaPlayerManager playerManager;
+  @Mock
+  private ArenaPlayerManager playerManager;
 
-    @Mock
-    private ArenaGameManager gameManager;
+  @Mock
+  private ArenaGameManager gameManager;
 
-    @BeforeEach
-    void setup() {
+  @BeforeEach
+  void setup() {
+    ArenaChatConfiguration chatConfiguration = ArenaChatConfiguration
+      .builder()
+      .announcePlayerJoin(true)
+      .announcePlayerLeave(true)
+      .build();
 
-        ArenaChatConfiguration chatConfiguration = ArenaChatConfiguration.builder()
-                .announcePlayerJoin(true)
-                .announcePlayerLeave(true)
-                .build();
+    manager = new ArenaChatManager(getArena(), chatConfiguration);
+  }
 
-        manager = new ArenaChatManager(getArena(), chatConfiguration);
-    }
+  @DisplayName("Chat Handler - Registered Game Mode")
+  @Test
+  void shouldTestGetHandlerForRegisteredGameMode() {
+    // Register the arena managers directly used for this test.
+    registerMockArenaManager(gameManager, ArenaManagerType.GAME);
+    registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
+    completeMockArenaManagerRegistration(manager);
 
-    @DisplayName("Chat Handler - Registered Game Mode")
-    @Test
-    void shouldTestGetHandlerForRegisteredGameMode() {
+    // Mock that the game status will always come back as empty.
+    registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
 
-        // Register the arena managers directly used for this test.
-        registerMockArenaManager(gameManager, ArenaManagerType.GAME);
-        registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
-        completeMockArenaManagerRegistration(manager);
+    // Create a new chat handler which will be used for this game status.
+    TobnetChatHandler chatHandler = new OpenChatHandler(manager);
 
-        // Mock that the game status will always come back as empty.
-        registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
+    // Register chat provider for the game state.
+    manager.registerChatHandler(ArenaGameStatus.EMPTY, chatHandler);
 
-        // Create a new chat handler which will be used for this game status.
-        TobnetChatHandler chatHandler = new OpenChatHandler(manager);
+    // Verify that we're given the correct chat handler for the current game status.
+    assertEquals(chatHandler, manager.getHandlerForCurrentArenaStatus());
+  }
 
-        // Register chat provider for the game state.
-        manager.registerChatHandler(ArenaGameStatus.EMPTY, chatHandler);
+  @DisplayName("Chat Handler - Non-Registered Game Mode")
+  @Test
+  void shouldTestGetHandlerForNonRegisteredGameMode() {
+    // Register the arena managers directly used for this test.
+    registerMockArenaManager(gameManager, ArenaManagerType.GAME);
+    registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
+    completeMockArenaManagerRegistration(manager);
 
-        // Verify that we're given the correct chat handler for the current game status.
-        assertEquals(chatHandler, manager.getHandlerForCurrentArenaStatus());
-    }
+    // Mock that the game status will always come back as empty.
+    registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
 
-    @DisplayName("Chat Handler - Non-Registered Game Mode")
-    @Test
-    void shouldTestGetHandlerForNonRegisteredGameMode() {
-        // Register the arena managers directly used for this test.
-        registerMockArenaManager(gameManager, ArenaManagerType.GAME);
-        registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
-        completeMockArenaManagerRegistration(manager);
+    // Register no chat provider for the game state.
+    manager.registerChatHandler(ArenaGameStatus.EMPTY, null);
 
-        // Mock that the game status will always come back as empty.
-        registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
+    // Verify that we're given some handler even though we provided a null. This tests the failover.
+    assertNotNull(manager.getHandlerForCurrentArenaStatus());
+  }
 
-        // Register no chat provider for the game state.
-        manager.registerChatHandler(ArenaGameStatus.EMPTY, null);
+  @DisplayName("Chat Handler - Player to Player Messaging")
+  @Test
+  void shouldTestPlayerToPlayerMessageHandling() {
+    // Register the arena managers directly used for this test.
+    registerMockArenaManager(gameManager, ArenaManagerType.GAME);
+    registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
+    completeMockArenaManagerRegistration(manager);
 
-        // Verify that we're given some handler even though we provided a null. This tests the failover.
-        assertNotNull(manager.getHandlerForCurrentArenaStatus());
-    }
+    // Mock that the game status will always come back as empty.
+    registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
 
-    @DisplayName("Chat Handler - Player to Player Messaging")
-    @Test
-    void shouldTestPlayerToPlayerMessageHandling() {
+    // Register a spy chat handler for the game status.
+    manager.registerChatHandler(
+      ArenaGameStatus.EMPTY,
+      Mockito.spy(new OpenChatHandler(manager))
+    );
 
-        // Register the arena managers directly used for this test.
-        registerMockArenaManager(gameManager, ArenaManagerType.GAME);
-        registerMockArenaManager(playerManager, ArenaManagerType.PLAYER);
-        completeMockArenaManagerRegistration(manager);
+    Player player = Mockito.spy(Player.class);
 
-        // Mock that the game status will always come back as empty.
-        registerArenaGameStatusMock(gameManager, ArenaGameStatus.EMPTY);
+    // Create the player chat event.
+    AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(
+      true,
+      player,
+      "Test message",
+      new HashSet<>()
+    );
 
-        // Register a spy chat handler for the game status.
-        manager.registerChatHandler(ArenaGameStatus.EMPTY, Mockito.spy(new OpenChatHandler(manager)));
+    // Call the event to be handled.
+    manager.handlePlayerToPlayerMessage(event);
 
-        Player player = Mockito.spy(Player.class);
-
-        // Create the player chat event.
-        AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, "Test message", new HashSet<>());
-
-        // Call the event to be handled.
-        manager.handlePlayerToPlayerMessage(event);
-
-        // Verify that our logic has handed the message off to our desired handler to be processed.
-        Mockito.verify(manager.getHandlerForCurrentArenaStatus(), Mockito.times(1)).handlePlayerToPlayerMessage(event);
-    }
+    // Verify that our logic has handed the message off to our desired handler to be processed.
+    Mockito
+      .verify(manager.getHandlerForCurrentArenaStatus(), Mockito.times(1))
+      .handlePlayerToPlayerMessage(event);
+  }
 }

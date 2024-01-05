@@ -12,27 +12,26 @@ import org.bukkit.entity.Player;
 @Builder
 public class GamePlayer {
 
-    private final TobnetArena arena;
-    private final String uuid;
-    private final String username;
-    private final Player player;
-    private final GamePlayerDisplayManager displayManager;
+  private final TobnetArena arena;
+  private final String uuid;
+  private final String username;
+  private final Player player;
+  private final GamePlayerDisplayManager displayManager;
 
-    public GamePlayer(TobnetArena arena, Player player) {
-        this.arena = arena;
-        this.uuid = player.getUniqueId().toString();
-        this.username = player.getDisplayName();
-        this.player = player;
-        this.displayManager = new GamePlayerDisplayManager(this);
-    }
+  public GamePlayer(TobnetArena arena, Player player) {
+    this.arena = arena;
+    this.uuid = player.getUniqueId().toString();
+    this.username = player.getDisplayName();
+    this.player = player;
+    this.displayManager = new GamePlayerDisplayManager(this);
+  }
+  // Mode - Survivor, Killer, Spectator?
 
-    // Mode - Survivor, Killer, Spectator?
+  // Spawn Preference.
 
-    // Spawn Preference.
+  // Character?
 
-    // Character?
+  // Perks.
 
-    // Perks.
-
-    // TODO Every player has display update task which handles update of display for them
+  // TODO Every player has display update task which handles update of display for them
 }

@@ -17,6 +17,6 @@ import org.bukkit.entity.Player;
 @AllArgsConstructor
 public class TobnetPlayerPreJoinEvent extends TobnetCustomCancellableEvent {
 
-    private final TobnetArena arena;
-    private final Player player;
+  private final TobnetArena arena;
+  private final Player player;
 }

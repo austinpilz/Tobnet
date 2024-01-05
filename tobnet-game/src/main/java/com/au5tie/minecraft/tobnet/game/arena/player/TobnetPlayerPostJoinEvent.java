@@ -18,6 +18,6 @@ import lombok.Getter;
 @Getter
 public class TobnetPlayerPostJoinEvent extends TobnetCustomEvent {
 
-    private final TobnetArena arena;
-    private final GamePlayer player;
+  private final TobnetArena arena;
+  private final GamePlayer player;
 }

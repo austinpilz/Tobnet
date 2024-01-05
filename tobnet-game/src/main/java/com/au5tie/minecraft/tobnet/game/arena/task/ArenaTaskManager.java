@@ -17,22 +17,20 @@ import com.au5tie.minecraft.tobnet.game.arena.manager.ArenaManagerType;
 @Deprecated
 public class ArenaTaskManager extends ArenaManager {
 
-    public ArenaTaskManager(TobnetArena arena) {
-        super(arena);
-    }
+  public ArenaTaskManager(TobnetArena arena) {
+    super(arena);
+  }
 
-    @Override
-    public ArenaManagerType getType() {
-        return ArenaManagerType.TASK;
-    }
+  @Override
+  public ArenaManagerType getType() {
+    return ArenaManagerType.TASK;
+  }
 
-    @Override
-    public void prepareManager() {
-        //
-    }
+  @Override
+  public void prepareManager() {
+    //
+  }
 
-    @Override
-    public void destroyManager() {
-
-    }
+  @Override
+  public void destroyManager() {}
 }

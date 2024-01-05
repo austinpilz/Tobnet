@@ -7,39 +7,39 @@ import com.au5tie.minecraft.tobnet.game.arena.wait.ArenaWaitingRoomManager;
 
 public class SandFallArena extends TobnetArena {
 
-    public SandFallArena(String name) {
-        super(name);
-    }
+  public SandFallArena(String name) {
+    super(name);
+  }
 
-    @Override
-    protected void prepareAdditionalManagers() {
-        // Chest Manager.
-        prepareArenaChestManager();
+  @Override
+  protected void prepareAdditionalManagers() {
+    // Chest Manager.
+    prepareArenaChestManager();
 
-        // Sign Manager.
-        prepareSignManager();
+    // Sign Manager.
+    prepareSignManager();
 
-        // Waiting Room.
-        prepareWaitingRoomManager();
-    }
+    // Waiting Room.
+    prepareWaitingRoomManager();
+  }
 
-    private void prepareArenaChestManager() {
+  private void prepareArenaChestManager() {
+    ArenaChestManager chestManager = new ArenaChestManager(this);
+    registerManager(chestManager);
+  }
 
-        ArenaChestManager chestManager = new ArenaChestManager(this);
-        registerManager(chestManager);
-    }
+  private void prepareSignManager() {
+    ArenaSignManager signManager = new ArenaSignManager(this);
+    registerManager(signManager);
+  }
 
-    private void prepareSignManager() {
+  private void prepareWaitingRoomManager() {
+    // TODO Need to pass in waiting room config
 
-        ArenaSignManager signManager = new ArenaSignManager(this);
-        registerManager(signManager);
-    }
-
-    private void prepareWaitingRoomManager () {
-
-        // TODO Need to pass in waiting room config
-
-        ArenaWaitingRoomManager waitingRoomManager = new ArenaWaitingRoomManager(this, null);
-        registerManager(waitingRoomManager);
-    }
+    ArenaWaitingRoomManager waitingRoomManager = new ArenaWaitingRoomManager(
+      this,
+      null
+    );
+    registerManager(waitingRoomManager);
+  }
 }

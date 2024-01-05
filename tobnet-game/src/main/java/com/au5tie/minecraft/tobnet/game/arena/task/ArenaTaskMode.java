@@ -5,8 +5,8 @@ package com.au5tie.minecraft.tobnet.game.arena.task;
  * @author au5tie
  */
 public enum ArenaTaskMode {
-    SYNC,
+  SYNC,
 
-    @Deprecated
-    ASYNC
+  @Deprecated
+  ASYNC,
 }

@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ArenaCountdownConfiguration extends ArenaConfiguration {
 
-    private boolean displayChatIntervals = true;
-    private boolean displayCountdownUI = true;
+  private boolean displayChatIntervals = true;
+  private boolean displayCountdownUI = true;
 }

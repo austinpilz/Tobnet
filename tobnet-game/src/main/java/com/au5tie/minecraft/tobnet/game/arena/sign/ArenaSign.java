@@ -10,7 +10,8 @@ import org.bukkit.Location;
 @AllArgsConstructor
 @Builder
 public class ArenaSign {
-    private final TobnetArena arena;
-    private final ArenaSignType type;
-    private final Location location;
+
+  private final TobnetArena arena;
+  private final ArenaSignType type;
+  private final Location location;
 }

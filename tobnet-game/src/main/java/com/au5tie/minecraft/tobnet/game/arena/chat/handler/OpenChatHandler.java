@@ -12,12 +12,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  */
 public class OpenChatHandler extends TobnetChatHandler {
 
-    public OpenChatHandler(ArenaChatManager chatManager) {
-        super(chatManager);
-    }
+  public OpenChatHandler(ArenaChatManager chatManager) {
+    super(chatManager);
+  }
 
-    @Override
-    void performMessageHandling(AsyncPlayerChatEvent event) {
-        // We do nothing, this is open communication.
-    }
+  @Override
+  void performMessageHandling(AsyncPlayerChatEvent event) {
+    // We do nothing, this is open communication.
+  }
 }

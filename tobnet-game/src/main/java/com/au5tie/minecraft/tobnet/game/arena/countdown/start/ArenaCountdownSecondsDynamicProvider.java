@@ -10,28 +10,28 @@ import com.au5tie.minecraft.tobnet.game.arena.player.ArenaPlayerManager;
  *
  * @author au5tie
  */
-public class ArenaCountdownSecondsDynamicProvider extends ArenaCountdownSecondsProvider {
+public class ArenaCountdownSecondsDynamicProvider
+  extends ArenaCountdownSecondsProvider {
 
-    private final int seconds;
+  private final int seconds;
 
-    public ArenaCountdownSecondsDynamicProvider (TobnetArena arena, int seconds) {
+  public ArenaCountdownSecondsDynamicProvider(TobnetArena arena, int seconds) {
+    super(ArenaCountdownSecondsMode.CUSTOM, arena);
+    this.seconds = seconds;
+  }
 
-        super(ArenaCountdownSecondsMode.CUSTOM, arena);
+  /**
+   * Determines the starting number of seconds that the countdown should count down from.
+   *
+   * @return Countdown starting seconds.
+   * @author au5tie
+   */
+  @Override
+  public int getStartingSeconds() {
+    ArenaPlayerManager playerManager = (ArenaPlayerManager) ArenaManagerUtils
+      .getManagerOfType(getArena(), ArenaManagerType.PLAYER)
+      .get();
 
-        this.seconds = seconds;
-    }
-
-    /**
-     * Determines the starting number of seconds that the countdown should count down from.
-     *
-     * @return Countdown starting seconds.
-     * @author au5tie
-     */
-    @Override
-    public int getStartingSeconds() {
-
-        ArenaPlayerManager playerManager = (ArenaPlayerManager) ArenaManagerUtils.getManagerOfType(getArena(), ArenaManagerType.PLAYER).get();
-
-        return seconds * playerManager.getNumberOfPlayers();
-    }
+    return seconds * playerManager.getNumberOfPlayers();
+  }
 }

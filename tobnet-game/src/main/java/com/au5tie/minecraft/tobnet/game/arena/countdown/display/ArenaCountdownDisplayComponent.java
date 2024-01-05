@@ -7,13 +7,12 @@ package com.au5tie.minecraft.tobnet.game.arena.countdown.display;
  * @author au5tie
  */
 public interface ArenaCountdownDisplayComponent {
-
-    /**
-     * Updates the countdown progress
-     *
-     * @param secondsLeft Seconds left in the countdown.
-     * @param maxSeconds Maximum seconds left in the countdown.
-     * @author au5tie
-     */
-    void updateProgress(int secondsLeft, int maxSeconds);
+  /**
+   * Updates the countdown progress
+   *
+   * @param secondsLeft Seconds left in the countdown.
+   * @param maxSeconds Maximum seconds left in the countdown.
+   * @author au5tie
+   */
+  void updateProgress(int secondsLeft, int maxSeconds);
 }

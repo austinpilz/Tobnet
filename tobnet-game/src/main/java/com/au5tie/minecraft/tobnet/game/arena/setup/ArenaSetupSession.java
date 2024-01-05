@@ -15,57 +15,62 @@ import org.bukkit.entity.Player;
 @Getter
 public class ArenaSetupSession extends SetupSession {
 
-    public ArenaSetupSession(Player player) {
+  public ArenaSetupSession(Player player) {
+    super(player);
+  }
 
-        super(player);
-    }
+  /**
+   * Configures the {@link SetupSessionStep}s to be invoked during this session.
+   *
+   * This will configure all of the basic Arena Setup steps to define the name, boundaries, etc.
+   *
+   * @author au5tie
+   */
+  @Override
+  protected void configureSteps() {
+    // Arena Name.
+    ArenaSetupSessionStepName nameStep = new ArenaSetupSessionStepName(0, this);
+    registerStep(nameStep);
 
-    /**
-     * Configures the {@link SetupSessionStep}s to be invoked during this session.
-     *
-     * This will configure all of the basic Arena Setup steps to define the name, boundaries, etc.
-     *
-     * @author au5tie
-     */
-    @Override
-    protected void configureSteps() {
+    // Boundary One.
+    ArenaSetupSessionStepBoundaryOne boundaryOneStep =
+      new ArenaSetupSessionStepBoundaryOne(1, this);
+    registerStep(boundaryOneStep);
 
-        // Arena Name.
-        ArenaSetupSessionStepName nameStep = new ArenaSetupSessionStepName(0, this);
-        registerStep(nameStep);
+    // Boundary Two.
+    ArenaSetupSessionStepBoundaryTwo boundaryTwoStep =
+      new ArenaSetupSessionStepBoundaryTwo(2, this);
+    registerStep(boundaryTwoStep);
+  }
 
-        // Boundary One.
-        ArenaSetupSessionStepBoundaryOne boundaryOneStep = new ArenaSetupSessionStepBoundaryOne(1, this);
-        registerStep(boundaryOneStep);
+  @Override
+  protected void onSessionComplete(SetupSessionStepInvocationContext context) {
+    // Link back to all of the steps that were completed during the session.
+    ArenaSetupSessionStepName nameStep =
+      (ArenaSetupSessionStepName) getStepByName("arena-name").get();
+    ArenaSetupSessionStepBoundaryOne boundaryOneStep =
+      (ArenaSetupSessionStepBoundaryOne) getStepByName("boundary-one").get();
+    ArenaSetupSessionStepBoundaryTwo boundaryTwoStep =
+      (ArenaSetupSessionStepBoundaryTwo) getStepByName("boundary-two").get();
 
-        // Boundary Two.
-        ArenaSetupSessionStepBoundaryTwo boundaryTwoStep = new ArenaSetupSessionStepBoundaryTwo(2, this);
-        registerStep(boundaryTwoStep);
-    }
+    // TODO Need to figure out consistency in creating the object.
 
-    @Override
-    protected void onSessionComplete(SetupSessionStepInvocationContext context) {
+    // Create the arena.
+    TobnetArena arena = null; //TODO Reflection? Or does setup have to be in their code?!
 
-        // Link back to all of the steps that were completed during the session.
-        ArenaSetupSessionStepName nameStep = (ArenaSetupSessionStepName)getStepByName("arena-name").get();
-        ArenaSetupSessionStepBoundaryOne boundaryOneStep = (ArenaSetupSessionStepBoundaryOne)getStepByName("boundary-one").get();
-        ArenaSetupSessionStepBoundaryTwo boundaryTwoStep = (ArenaSetupSessionStepBoundaryTwo)getStepByName("boundary-two").get();
+    // Configure the boundaries.
+    arena.setBoundaryOne(boundaryOneStep.getBoundaryLocation());
+    arena.setBoundaryTwo(boundaryTwoStep.getBoundaryLocation());
 
-        // TODO Need to figure out consistency in creating the object.
+    // Register the arena with the controller.
+    TobnetGamePlugin.getArenaController().registerArena(arena);
 
-        // Create the arena.
-        TobnetArena arena = null; //TODO Reflection? Or does setup have to be in their code?!
+    // TODO Store the arena in the database.
 
-        // Configure the boundaries.
-        arena.setBoundaryOne(boundaryOneStep.getBoundaryLocation());
-        arena.setBoundaryTwo(boundaryTwoStep.getBoundaryLocation());
-
-        // Register the arena with the controller.
-        TobnetGamePlugin.getArenaController().registerArena(arena);
-
-        // TODO Store the arena in the database.
-
-        // Notify the user of the setup success.
-        TobnetChatUtils.sendPlayerMessage(context.getPlayer(), "Setup of arena " + arena.getName() + " completed successfully.");
-    }
+    // Notify the user of the setup success.
+    TobnetChatUtils.sendPlayerMessage(
+      context.getPlayer(),
+      "Setup of arena " + arena.getName() + " completed successfully."
+    );
+  }
 }

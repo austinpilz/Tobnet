@@ -15,24 +15,23 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 @Getter
 public abstract class TobnetChatHandler {
 
-    private final ArenaChatManager chatManager;
+  private final ArenaChatManager chatManager;
 
-    /**
-     * Performs the handler's message handling functionality.
-     *
-     * @param event Player chat event.
-     * @author au5tie
-     */
-    abstract void performMessageHandling(AsyncPlayerChatEvent event);
+  /**
+   * Performs the handler's message handling functionality.
+   *
+   * @param event Player chat event.
+   * @author au5tie
+   */
+  abstract void performMessageHandling(AsyncPlayerChatEvent event);
 
-    /**
-     * Handles player to player message event.
-     *
-     * @param event Player chat event.
-     * @author au5tie
-     */
-    public void handlePlayerToPlayerMessage(AsyncPlayerChatEvent event) {
-
-        performMessageHandling(event);
-    }
+  /**
+   * Handles player to player message event.
+   *
+   * @param event Player chat event.
+   * @author au5tie
+   */
+  public void handlePlayerToPlayerMessage(AsyncPlayerChatEvent event) {
+    performMessageHandling(event);
+  }
 }

@@ -14,9 +14,14 @@ import org.bukkit.Location;
 @ToString
 public class ArenaSpawnLocation extends ArenaLocation {
 
-    private ArenaSpawnLocationType type;
+  private ArenaSpawnLocationType type;
 
-    public ArenaSpawnLocation(TobnetArena arena, String name, String type, Location location) {
-        super(arena, name, type, location);
-    }
+  public ArenaSpawnLocation(
+    TobnetArena arena,
+    String name,
+    String type,
+    Location location
+  ) {
+    super(arena, name, type, location);
+  }
 }

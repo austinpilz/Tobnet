@@ -6,6 +6,6 @@ package com.au5tie.minecraft.tobnet.game.message.provider;
  * @author au5tie
  */
 public enum MessageProviderLanguage {
-    ENGLISH_US,
-    CUSTOM
+  ENGLISH_US,
+  CUSTOM,
 }

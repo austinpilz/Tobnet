@@ -14,22 +14,37 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
  */
 public class IsolationChatHandler extends TobnetChatHandler {
 
-    public IsolationChatHandler(ArenaChatManager chatManager) {
-        super(chatManager);
-    }
+  public IsolationChatHandler(ArenaChatManager chatManager) {
+    super(chatManager);
+  }
 
-    @Override
-    void performMessageHandling(AsyncPlayerChatEvent event) {
-
-        if (getChatManager().getPlayerManager().isPlaying(event.getPlayer().getUniqueId().toString())) {
-            // The player sending the message is playing in the arena.
-            // The only recipients should be the players currently in the arena.
-            event.getRecipients().clear();
-            event.getRecipients().addAll(TobnetPlayerUtils.gamePlayerToBukkitPlayerList(getChatManager().getPlayerManager().getPlayers()));
-        } else {
-            // The player sending the message is outside the arena / not playing, our players should not be able to see it.
-            // Remove all of this arena's players from the recipients of the message.
-            event.getRecipients().removeAll(TobnetPlayerUtils.gamePlayerToBukkitPlayerList(getChatManager().getPlayerManager().getPlayers()));
-        }
+  @Override
+  void performMessageHandling(AsyncPlayerChatEvent event) {
+    if (
+      getChatManager()
+        .getPlayerManager()
+        .isPlaying(event.getPlayer().getUniqueId().toString())
+    ) {
+      // The player sending the message is playing in the arena.
+      // The only recipients should be the players currently in the arena.
+      event.getRecipients().clear();
+      event
+        .getRecipients()
+        .addAll(
+          TobnetPlayerUtils.gamePlayerToBukkitPlayerList(
+            getChatManager().getPlayerManager().getPlayers()
+          )
+        );
+    } else {
+      // The player sending the message is outside the arena / not playing, our players should not be able to see it.
+      // Remove all of this arena's players from the recipients of the message.
+      event
+        .getRecipients()
+        .removeAll(
+          TobnetPlayerUtils.gamePlayerToBukkitPlayerList(
+            getChatManager().getPlayerManager().getPlayers()
+          )
+        );
     }
+  }
 }

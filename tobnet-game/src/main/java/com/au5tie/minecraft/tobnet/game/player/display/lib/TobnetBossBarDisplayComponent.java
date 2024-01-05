@@ -20,51 +20,54 @@ import org.bukkit.boss.BossBar;
 @Getter
 public class TobnetBossBarDisplayComponent extends GamePlayerDisplayComponent {
 
-    private final BossBar bar;
-    private String title;
-    private BarColor color;
-    private BarStyle style;
-    private BarFlag flag;
+  private final BossBar bar;
+  private String title;
+  private BarColor color;
+  private BarStyle style;
+  private BarFlag flag;
 
-    public TobnetBossBarDisplayComponent(String name, int priority, GamePlayer player, String title, BarColor color, BarStyle style, BarFlag flag) {
+  public TobnetBossBarDisplayComponent(
+    String name,
+    int priority,
+    GamePlayer player,
+    String title,
+    BarColor color,
+    BarStyle style,
+    BarFlag flag
+  ) {
+    super(name, priority, GamePlayerDisplayComponentLocation.BOSS_BAR, player);
+    this.title = title;
+    this.color = color;
+    this.style = style;
+    this.flag = flag;
 
-        super(name, priority, GamePlayerDisplayComponentLocation.BOSS_BAR, player);
+    bar = Bukkit.createBossBar(getTitle(), getColor(), getStyle(), getFlag());
+  }
 
-        this.title = title;
-        this.color = color;
-        this.style = style;
-        this.flag = flag;
+  @Override
+  protected void display() {
+    bar.addPlayer(getPlayer().getPlayer());
+  }
 
-        bar = Bukkit.createBossBar(getTitle(), getColor(), getStyle(), getFlag());
-    }
+  @Override
+  protected void hide() {
+    bar.removePlayer(getPlayer().getPlayer());
+    bar.removeAll();
+  }
 
-    @Override
-    protected void display() {
+  @Override
+  protected void destroy() {
+    // Destroy process already calls hide, so let's just double check everyone has been removed.
+    bar.removeAll();
+  }
 
-        bar.addPlayer(getPlayer().getPlayer());
-    }
-
-    @Override
-    protected void hide() {
-
-        bar.removePlayer(getPlayer().getPlayer());
-        bar.removeAll();
-    }
-
-    @Override
-    protected void destroy() {
-        // Destroy process already calls hide, so let's just double check everyone has been removed.
-        bar.removeAll();
-    }
-
-    /**
-     * Sets the boss bar progress on a scale of 0.0 - 1.0.
-     *
-     * @param progress Bar progress.
-     * @author au5tie
-     */
-    protected void setProgress(double progress) {
-
-        bar.setProgress(progress);
-    }
+  /**
+   * Sets the boss bar progress on a scale of 0.0 - 1.0.
+   *
+   * @param progress Bar progress.
+   * @author au5tie
+   */
+  protected void setProgress(double progress) {
+    bar.setProgress(progress);
+  }
 }

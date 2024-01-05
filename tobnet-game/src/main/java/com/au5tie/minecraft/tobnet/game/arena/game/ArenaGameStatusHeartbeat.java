@@ -5,11 +5,10 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArenaGameStatusHeartbeat implements Runnable {
 
-    private final ArenaGameManager gameManager;
+  private final ArenaGameManager gameManager;
 
-    @Override
-    public void run() {
-
-        gameManager.evaluateGameStatus();
-    }
+  @Override
+  public void run() {
+    gameManager.evaluateGameStatus();
+  }
 }

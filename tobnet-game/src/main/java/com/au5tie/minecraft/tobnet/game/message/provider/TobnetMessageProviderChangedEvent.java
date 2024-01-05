@@ -15,6 +15,6 @@ import lombok.Getter;
 @Builder
 public class TobnetMessageProviderChangedEvent extends TobnetCustomEvent {
 
-    private final MessageProvider priorProvider;
-    private final MessageProvider newProvider;
+  private final MessageProvider priorProvider;
+  private final MessageProvider newProvider;
 }

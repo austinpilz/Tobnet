@@ -6,211 +6,203 @@ import com.au5tie.minecraft.tobnet.game.controller.ArenaController;
 import com.au5tie.minecraft.tobnet.game.controller.TobnetController;
 import com.au5tie.minecraft.tobnet.game.guice.TobnetPluginInjector;
 import com.au5tie.minecraft.tobnet.game.io.TobnetStorageController;
+import com.au5tie.minecraft.tobnet.game.log.TobnetLogUtils;
 import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
 import com.au5tie.minecraft.tobnet.game.session.TobnetSetupSessionController;
 import com.au5tie.minecraft.tobnet.game.time.TimeDifference;
-import com.au5tie.minecraft.tobnet.game.util.TobnetLogUtils;
 import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class TobnetGamePlugin extends JavaPlugin implements Module {
 
-    public static TobnetGamePlugin instance;
-    private static ArenaController arenaController;
-    private static TobnetCommandController commandController;
-    private static TobnetStorageController storageController;
-    private static TobnetSetupSessionController setupSessionController;
-    private static TobnetMessageController messageController;
-    public static final String chatPrefix = "[Tobnet] ";
-    public static final String engineCommand = "tob";
+  public static TobnetGamePlugin instance;
+  private static ArenaController arenaController;
+  private static TobnetCommandController commandController;
+  private static TobnetStorageController storageController;
+  private static TobnetSetupSessionController setupSessionController;
+  private static TobnetMessageController messageController;
+  public static final String chatPrefix = "[Tobnet] ";
+  public static final String engineCommand = "tob";
+
+  // Guice.
+  private Injector injector;
+  private final List<Module> modules = new ArrayList<>();
+  private final List<TobnetController> controllers = new ArrayList<>();
+
+  public TobnetGamePlugin() {
+    // Instance.
+    instance = this;
+  }
+
+  /**
+   * Performs implementing plugin on load tasks. This allows for the implementing plugin to perform it's own onEnable
+   * actions in addition to that of the core engine.
+   *
+   * @author au5tie
+   */
+  public abstract void enablePlugin();
+
+  /**
+   * Performs implementing plugin on unload tasks. This allows for the implementing plugin to perform it's own onDisable
+   * actions in addition to that of the core engine.
+   *
+   * @author au5tie
+   */
+  public abstract void disablePlugin();
+
+  @Override
+  public final void onEnable() {
+    // Begin loading the engine.
+    LocalDateTime pluginLoadStart = LocalDateTime.now();
+    TobnetLogUtils.getLogger().info("Engine loading begin.");
 
     // Guice.
-    private Injector injector;
-    private final List<Module> modules = new ArrayList<>();
-    private final List<TobnetController> controllers = new ArrayList<>();
+    this.injector = Guice.createInjector(new TobnetPluginInjector(this));
+    this.injector.injectMembers(this);
+    this.modules.forEach(this.injector::injectMembers);
 
-    public TobnetGamePlugin() {
+    // Setup Tobnet engine base components.
+    setupBaseControllers();
+    registerBaseCommandListeners();
 
-        // Instance.
-        instance = this;
-    }
+    // External Storage - Prepare and load data from external data source.
+    storageController.onStartup();
 
-    /**
-     * Performs implementing plugin on load tasks. This allows for the implementing plugin to perform it's own onEnable
-     * actions in addition to that of the core engine.
-     *
-     * @author au5tie
-     */
-    public abstract void enablePlugin();
+    // Allow the implementing plugin to perform configuration of its own.
+    enablePlugin();
 
-    /**
-     * Performs implementing plugin on unload tasks. This allows for the implementing plugin to perform it's own onDisable
-     * actions in addition to that of the core engine.
-     *
-     * @author au5tie
-     */
-    public abstract void disablePlugin();
+    // Prepare the controllers.
+    prepareControllers();
 
-    @Override
-    public final void onEnable() {
+    // Load complete. Log the round trip time.
+    TobnetLogUtils.info(
+      "Engine loaded successfully. Took " +
+      new TimeDifference(pluginLoadStart, LocalDateTime.now())
+    );
+  }
 
-        // Begin loading the engine.
-        LocalDateTime pluginLoadStart = LocalDateTime.now();
-        TobnetLogUtils.getLogger().info("Engine loading begin.");
+  @Override
+  public void configure(Binder binder) {
+    //binder.requestStaticInjection(TobnetStorageController.class);
+    //binder.requestStaticInjection(TobnetCommandController.class);
+  }
 
-        // Guice.
-        this.injector = Guice.createInjector(new TobnetPluginInjector(this));
-        this.injector.injectMembers(this);
-        this.modules.forEach(this.injector::injectMembers);
+  @Override
+  public final void onDisable() {
+    // Begin unloading the engine.
+    LocalDateTime pluginUnloadStart = LocalDateTime.now();
+    TobnetLogUtils.getLogger().info("Engine unload begin.");
 
-        // Setup Tobnet engine base components.
-        setupBaseControllers();
-        registerBaseCommandListeners();
+    // Allow the implementing plugin to perform shutdown operations.
+    disablePlugin();
 
-        // External Storage - Prepare and load data from external data source.
-        storageController.onStartup();
+    // Allow external storage to perform shutdown operations.
+    storageController.onShutdown();
 
-        // Allow the implementing plugin to perform configuration of its own.
-        enablePlugin();
+    // Unload complete. Log the round trip time.
+    TobnetLogUtils.info(
+      "Engine unloaded successfully. Took " +
+      new TimeDifference(pluginUnloadStart, LocalDateTime.now())
+    );
+  }
 
-        // Prepare the controllers.
-        prepareControllers();
+  /**
+   * Creates the Tobnet engine level base controllers which are required for the engine to function.
+   *
+   * @author au5tie
+   */
+  private void setupBaseControllers() {
+    arenaController = new ArenaController();
+    registerController(arenaController);
 
-        // Load complete. Log the round trip time.
-        TobnetLogUtils.info("Engine loaded successfully. Took " +
-                new TimeDifference(pluginLoadStart, LocalDateTime.now()));
-    }
+    commandController = new TobnetCommandController();
+    registerController(commandController);
 
-    @Override
-    public void configure(Binder binder) {
+    storageController = new TobnetStorageController();
+    registerController(storageController);
 
-        //binder.requestStaticInjection(TobnetStorageController.class);
-        //binder.requestStaticInjection(TobnetCommandController.class);
-    }
+    setupSessionController = createSetupSessionController();
+    registerController(setupSessionController);
 
-    @Override
-    public final void onDisable() {
-        // Begin unloading the engine.
-        LocalDateTime pluginUnloadStart = LocalDateTime.now();
-        TobnetLogUtils.getLogger().info("Engine unload begin.");
+    messageController = new TobnetMessageController();
+    registerController(messageController);
+  }
 
-        // Allow the implementing plugin to perform shutdown operations.
-        disablePlugin();
+  /**
+   * Creates the {@link TobnetSetupSessionController} which will control and manage all user setup sessions in the engine.
+   *
+   * @return Setup Session Controller.
+   * @author au5tie
+   */
+  protected TobnetSetupSessionController createSetupSessionController() {
+    return new TobnetSetupSessionController(engineCommand);
+  }
 
-        // Allow external storage to perform shutdown operations.
-        storageController.onShutdown();
+  /**
+   * Registers a new {@link TobnetController} with the plugin.
+   *
+   * @param controller Tobnet Controller.
+   * @author au5tie
+   */
+  protected void registerController(TobnetController controller) {
+    controllers.add(controller);
+  }
 
-        // Unload complete. Log the round trip time.
-        TobnetLogUtils.info("Engine unloaded successfully. Took " +
-                new TimeDifference(pluginUnloadStart, LocalDateTime.now()));
-    }
+  /**
+   * Prepares all the plugin's controllers for use.
+   *
+   * @author au5tie
+   */
+  private void prepareControllers() {
+    controllers.forEach(TobnetController::prepare);
+  }
 
-    /**
-     * Creates the Tobnet engine level base controllers which are required for the engine to function.
-     *
-     * @author au5tie
-     */
-    private final void setupBaseControllers() {
+  /**
+   * Returns the Tobnet Engine Command Controller.
+   *
+   * @return Command Controller.
+   * @author au5tie
+   */
+  public static final TobnetCommandController getCommandController() {
+    return commandController;
+  }
 
-        arenaController = new ArenaController();
-        registerController(arenaController);
+  /**
+   * Returns the {@link TobnetMessageController}.
+   *
+   * @return Message Controller.
+   * @author au5tie
+   */
+  public static TobnetMessageController getMessageController() {
+    return messageController;
+  }
 
-        commandController = new TobnetCommandController();
-        registerController(commandController);
+  /**
+   * Returns the {@link ArenaController}.
+   *
+   * @return Arena Controller.
+   * @author au5tie
+   */
+  public static ArenaController getArenaController() {
+    return arenaController;
+  }
 
-        storageController = new TobnetStorageController();
-        registerController(storageController);
+  public static TobnetSetupSessionController getSetupSessionController() {
+    return setupSessionController;
+  }
 
-        setupSessionController = createSetupSessionController();
-        registerController(setupSessionController);
+  private void registerBaseCommandListeners() {
+    getCommandController()
+      .registerCommandListener(new TobnetBaseArenaCommandListener());
+  }
 
-        messageController = new TobnetMessageController();
-        registerController(messageController);
-    }
-
-    /**
-     * Creates the {@link TobnetSetupSessionController} which will control and manage all user setup sessions in the engine.
-     *
-     * @return Setup Session Controller.
-     * @author au5tie
-     */
-    protected TobnetSetupSessionController createSetupSessionController() {
-        return new TobnetSetupSessionController(engineCommand);
-    }
-
-    /**
-     * Registers a new {@link TobnetController} with the plugin.
-     *
-     * @param controller Tobnet Controller.
-     * @author au5tie
-     */
-    protected void registerController(TobnetController controller) {
-
-        controllers.add(controller);
-    }
-
-    /**
-     * Prepares all the plugin's controllers for use.
-     *
-     * @author au5tie
-     */
-    private void prepareControllers() {
-
-        controllers.forEach(TobnetController::prepare);
-    }
-
-    /**
-     * Returns the Tobnet Engine Command Controller.
-     *
-     * @return Command Controller.
-     * @author au5tie
-     */
-    public static final TobnetCommandController getCommandController() {
-
-        return commandController;
-    }
-
-    /**
-     * Returns the {@link TobnetMessageController}.
-     *
-     * @return Message Controller.
-     * @author au5tie
-     */
-    public static TobnetMessageController getMessageController() {
-
-        return messageController;
-    }
-
-    /**
-     * Returns the {@link ArenaController}.
-     *
-     * @return Arena Controller.
-     * @author au5tie
-     */
-    public static ArenaController getArenaController() {
-
-        return arenaController;
-    }
-
-    public static TobnetSetupSessionController getSetupSessionController() {
-
-        return setupSessionController;
-    }
-
-    private void registerBaseCommandListeners() {
-
-        getCommandController().registerCommandLister(new TobnetBaseArenaCommandListener());
-    }
-
-    public static TobnetGamePlugin getInstance() {
-
-        return instance;
-    }
+  public static TobnetGamePlugin getInstance() {
+    return instance;
+  }
 }

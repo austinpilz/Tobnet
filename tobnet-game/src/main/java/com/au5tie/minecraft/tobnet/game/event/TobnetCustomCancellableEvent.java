@@ -7,19 +7,19 @@ import org.bukkit.event.Cancellable;
  *
  * @author au5tie
  */
-public abstract class TobnetCustomCancellableEvent extends TobnetCustomEvent implements Cancellable {
+public abstract class TobnetCustomCancellableEvent
+  extends TobnetCustomEvent
+  implements Cancellable {
 
-    private boolean cancelled;
+  private boolean cancelled;
 
-    @Override
-    public boolean isCancelled() {
+  @Override
+  public boolean isCancelled() {
+    return cancelled;
+  }
 
-        return cancelled;
-    }
-
-    @Override
-    public void setCancelled(boolean isCancelled) {
-
-        this.cancelled = isCancelled;
-    }
+  @Override
+  public void setCancelled(boolean isCancelled) {
+    this.cancelled = isCancelled;
+  }
 }

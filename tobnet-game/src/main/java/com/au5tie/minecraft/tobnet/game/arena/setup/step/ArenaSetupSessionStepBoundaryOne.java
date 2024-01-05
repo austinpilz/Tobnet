@@ -11,25 +11,33 @@ import org.bukkit.Location;
 @Getter
 public class ArenaSetupSessionStepBoundaryOne extends SetupSessionStep {
 
-    private Location boundaryLocation;
+  private Location boundaryLocation;
 
-    public ArenaSetupSessionStepBoundaryOne(int order, SetupSession session) {
+  public ArenaSetupSessionStepBoundaryOne(int order, SetupSession session) {
+    super("boundary-one", "Boundary One", order, session);
+  }
 
-        super("boundary-one", "Boundary One", order, session);
-    }
+  @Override
+  protected void displayPromptBody(SetupSessionStepInvocationContext context) {
+    // Send the instructions on how to configure the name.
+    context
+      .getPlayer()
+      .sendMessage(
+        "Go to the lower location of the arena boundary." +
+        SetupSessionChatUtils.generateColoredChatSegment(
+          "/tobsetup arena here",
+          ChatColor.GREEN,
+          ChatColor.WHITE,
+          true
+        )
+      );
+  }
 
-    @Override
-    protected void displayPromptBody(SetupSessionStepInvocationContext context) {
-        // Send the instructions on how to configure the name.
-        context.getPlayer().sendMessage("Go to the lower location of the arena boundary." +
-                SetupSessionChatUtils.generateColoredChatSegment("/tobsetup arena here", ChatColor.GREEN, ChatColor.WHITE, true));
-    }
+  @Override
+  protected boolean invoke(SetupSessionStepInvocationContext context) {
+    // Obtain the player's current location as the boundary position.
+    this.boundaryLocation = context.getPlayer().getLocation();
 
-    @Override
-    protected boolean invoke(SetupSessionStepInvocationContext context) {
-        // Obtain the player's current location as the boundary position.
-        this.boundaryLocation = context.getPlayer().getLocation();
-
-        return true;
-    }
+    return true;
+  }
 }

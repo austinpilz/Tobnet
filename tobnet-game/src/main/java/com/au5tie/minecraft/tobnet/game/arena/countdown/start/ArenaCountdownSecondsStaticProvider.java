@@ -1,6 +1,5 @@
 package com.au5tie.minecraft.tobnet.game.arena.countdown.start;
 
-
 import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
 
 /**
@@ -9,26 +8,24 @@ import com.au5tie.minecraft.tobnet.game.arena.TobnetArena;
  *
  * @author au5tie
  */
-public class ArenaCountdownSecondsStaticProvider extends ArenaCountdownSecondsProvider {
+public class ArenaCountdownSecondsStaticProvider
+  extends ArenaCountdownSecondsProvider {
 
-    private final int seconds;
+  private final int seconds;
 
-    public ArenaCountdownSecondsStaticProvider (TobnetArena arena, int seconds) {
+  public ArenaCountdownSecondsStaticProvider(TobnetArena arena, int seconds) {
+    super(ArenaCountdownSecondsMode.STATIC, arena);
+    this.seconds = seconds;
+  }
 
-        super(ArenaCountdownSecondsMode.STATIC, arena);
-
-        this.seconds = seconds;
-    }
-
-    /**
-     * Determines the starting number of seconds that the countdown should count down from.
-     *
-     * @return Countdown starting seconds.
-     * @author au5tie
-     */
-    @Override
-    public int getStartingSeconds() {
-
-        return seconds;
-    }
+  /**
+   * Determines the starting number of seconds that the countdown should count down from.
+   *
+   * @return Countdown starting seconds.
+   * @author au5tie
+   */
+  @Override
+  public int getStartingSeconds() {
+    return seconds;
+  }
 }

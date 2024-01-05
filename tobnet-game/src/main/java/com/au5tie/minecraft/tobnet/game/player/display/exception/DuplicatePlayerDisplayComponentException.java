@@ -12,7 +12,7 @@ package com.au5tie.minecraft.tobnet.game.player.display.exception;
  */
 public class DuplicatePlayerDisplayComponentException extends RuntimeException {
 
-    public DuplicatePlayerDisplayComponentException(String message) {
-        super(message);
-    }
+  public DuplicatePlayerDisplayComponentException(String message) {
+    super(message);
+  }
 }

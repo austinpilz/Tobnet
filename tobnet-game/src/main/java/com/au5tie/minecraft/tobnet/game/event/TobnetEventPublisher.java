@@ -10,14 +10,13 @@ import org.bukkit.event.Event;
  */
 public class TobnetEventPublisher {
 
-    /**
-     * Publishes event for distribution.
-     *
-     * @param event Event.
-     * @author au5tie
-     */
-    public static void publishEvent(Event event) {
-
-        Bukkit.getServer().getPluginManager().callEvent(event);
-    }
+  /**
+   * Publishes event for distribution.
+   *
+   * @param event Event.
+   * @author au5tie
+   */
+  public static void publishEvent(Event event) {
+    Bukkit.getServer().getPluginManager().callEvent(event);
+  }
 }

@@ -16,8 +16,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class TobnetArenaCountdownDecrementedEvent extends TobnetCustomEvent {
 
-    private final TobnetArena arena;
-    private final ArenaCountdownManager countdownManager;
-    private final int oldValue;
-    private final int newValue;
+  private final TobnetArena arena;
+  private final ArenaCountdownManager countdownManager;
+  private final int oldValue;
+  private final int newValue;
 }

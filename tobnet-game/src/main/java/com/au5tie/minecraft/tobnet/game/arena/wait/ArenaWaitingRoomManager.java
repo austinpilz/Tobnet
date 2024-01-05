@@ -8,26 +8,28 @@ import lombok.Getter;
 @Getter
 public class ArenaWaitingRoomManager extends ArenaManager {
 
-    private final ArenaWaitingRoomConfiguration configuration;
+  private final ArenaWaitingRoomConfiguration configuration;
 
-    public ArenaWaitingRoomManager(TobnetArena arena, ArenaWaitingRoomConfiguration configuration) {
-        super(arena);
+  public ArenaWaitingRoomManager(
+    TobnetArena arena,
+    ArenaWaitingRoomConfiguration configuration
+  ) {
+    super(arena);
+    this.configuration = configuration;
+  }
 
-        this.configuration = configuration;
-    }
+  @Override
+  public ArenaManagerType getType() {
+    return ArenaManagerType.WAITING_ROOM;
+  }
 
-    @Override
-    public ArenaManagerType getType() {
-        return ArenaManagerType.WAITING_ROOM;
-    }
+  @Override
+  public void prepareManager() {
+    //
+  }
 
-    @Override
-    public void prepareManager() {
-        //
-    }
-
-    @Override
-    public void destroyManager() {
-        //
-    }
+  @Override
+  public void destroyManager() {
+    //
+  }
 }

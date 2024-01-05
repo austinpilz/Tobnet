@@ -12,18 +12,26 @@ import org.bukkit.boss.BarStyle;
  *
  * @author au5tie
  */
-public class ArenaCountdownDisplayComponentBossBar extends TobnetBossBarDisplayComponent implements ArenaCountdownDisplayComponent {
+public class ArenaCountdownDisplayComponentBossBar
+  extends TobnetBossBarDisplayComponent
+  implements ArenaCountdownDisplayComponent {
 
-    public ArenaCountdownDisplayComponentBossBar(String name, int priority, GamePlayer player, String title, BarColor color, BarStyle style, BarFlag flag) {
+  public ArenaCountdownDisplayComponentBossBar(
+    String name,
+    int priority,
+    GamePlayer player,
+    String title,
+    BarColor color,
+    BarStyle style,
+    BarFlag flag
+  ) {
+    super(name, priority, player, title, color, style, flag);
+  }
 
-        super(name, priority, player, title, color, style, flag);
-    }
+  @Override
+  public void updateProgress(int secondsLeft, int maxSeconds) {
+    float percentage = ((float) secondsLeft) / maxSeconds;
 
-    @Override
-    public void updateProgress(int secondsLeft, int maxSeconds) {
-
-        float percentage = ((float) secondsLeft) / maxSeconds;
-
-        setProgress(percentage);
-    }
+    setProgress(percentage);
+  }
 }

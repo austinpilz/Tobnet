@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 public class ArenaChestConfiguration {
 
-    private boolean allowSimultaneousOpens;
+  private boolean allowSimultaneousOpens;
 }

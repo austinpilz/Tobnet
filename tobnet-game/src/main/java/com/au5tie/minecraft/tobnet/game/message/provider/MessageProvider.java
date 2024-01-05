@@ -1,7 +1,6 @@
 package com.au5tie.minecraft.tobnet.game.message.provider;
 
 import com.au5tie.minecraft.tobnet.game.message.TobnetMessageController;
-
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -19,57 +18,53 @@ import java.util.Optional;
  */
 public abstract class MessageProvider {
 
-    private final MessageProviderLanguage language;
-    private final HashMap<String, String> messages;
+  private final MessageProviderLanguage language;
+  private final HashMap<String, String> messages;
 
-    public MessageProvider(MessageProviderLanguage language) {
+  public MessageProvider(MessageProviderLanguage language) {
+    this.language = language;
+    this.messages = new HashMap<>();
 
-        this.language = language;
-        this.messages = new HashMap<>();
+    // Have the provider store register all of its messages.
+    registerMessages();
+  }
 
-        // Have the provider store register all of its messages.
-        registerMessages();
-    }
+  /**
+   * Returns the language of the messages the provider handles.
+   *
+   * @return Message Provider Language.
+   * @author au5tie
+   */
+  public final MessageProviderLanguage getLanguage() {
+    return language;
+  }
 
-    /**
-     * Returns the language of the messages the provider handles.
-     *
-     * @return Message Provider Language.
-     * @author au5tie
-     */
-    public final MessageProviderLanguage getLanguage() {
+  /**
+   * Registers all the messages which the provider will manage.
+   *
+   * @author au5tie
+   */
+  public abstract void registerMessages();
 
-        return language;
-    }
+  /**
+   * Registers a message within the provider.
+   *
+   * @param name Message name.
+   * @param message Message content.
+   * @author au5tie
+   */
+  protected final void registerMessage(String name, String message) {
+    messages.put(name, message);
+  }
 
-    /**
-     * Registers all of the messages which the provider will manage.
-     *
-     * @author au5tie
-     */
-    public abstract void registerMessages();
-
-    /**
-     * Registers a message within the provider.
-     *
-     * @param name Message name.
-     * @param message Message content.
-     * @author au5tie
-     */
-    protected final void registerMessage(String name, String message) {
-
-        messages.put(name, message);
-    }
-
-    /**
-     * Obtains the message content for the provided message name.
-     *
-     * @param name Message Name.
-     * @return The message content, if it exists within the provider.
-     * @author au5tie
-     */
-    public final Optional<String> getMessage(String name) {
-
-        return Optional.ofNullable(messages.get(name));
-    }
+  /**
+   * Obtains the message content for the provided message name.
+   *
+   * @param name Message Name.
+   * @return The message content, if it exists within the provider.
+   * @author au5tie
+   */
+  public final Optional<String> getMessage(String name) {
+    return Optional.ofNullable(messages.get(name));
+  }
 }

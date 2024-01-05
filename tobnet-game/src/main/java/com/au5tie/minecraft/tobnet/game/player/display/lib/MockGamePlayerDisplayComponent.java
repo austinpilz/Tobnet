@@ -10,25 +10,30 @@ import com.au5tie.minecraft.tobnet.game.player.display.component.GamePlayerDispl
  *
  * @author au5tie
  */
-public final class MockGamePlayerDisplayComponent extends GamePlayerDisplayComponent {
+public final class MockGamePlayerDisplayComponent
+  extends GamePlayerDisplayComponent {
 
-    public MockGamePlayerDisplayComponent(String name, int priority, GamePlayer player, GamePlayerDisplayComponentLocation location) {
+  public MockGamePlayerDisplayComponent(
+    String name,
+    int priority,
+    GamePlayer player,
+    GamePlayerDisplayComponentLocation location
+  ) {
+    super(name, priority, location, player);
+  }
 
-        super(name, priority, location, player);
-    }
+  @Override
+  protected void display() {
+    // Nothing for mock.
+  }
 
-    @Override
-    protected void display() {
-        // Nothing for mock.
-    }
+  @Override
+  protected void hide() {
+    // Nothing for mock.
+  }
 
-    @Override
-    protected void hide() {
-        // Nothing for mock.
-    }
-
-    @Override
-    protected void destroy() {
-        // Nothing for mock.
-    }
+  @Override
+  protected void destroy() {
+    // Nothing for mock.
+  }
 }

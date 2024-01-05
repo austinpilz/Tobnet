@@ -11,11 +11,11 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ArenaCountdownUpdateTask implements Runnable {
 
-    private final ArenaCountdownManager countdownManager;
+  private final ArenaCountdownManager countdownManager;
 
-    @Override
-    public void run() {
-        // Call the heartbeat, it will take care of doing the decrement.
-        countdownManager.heartbeat();
-    }
+  @Override
+  public void run() {
+    // Call the heartbeat, it will take care of doing the decrement.
+    countdownManager.heartbeat();
+  }
 }

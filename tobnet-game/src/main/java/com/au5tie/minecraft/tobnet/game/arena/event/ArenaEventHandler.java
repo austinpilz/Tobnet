@@ -14,12 +14,11 @@ import org.bukkit.event.Listener;
 @Getter
 public class ArenaEventHandler implements Listener {
 
-    private final TobnetArena arena;
-    private final ArenaManager manager;
+  private final TobnetArena arena;
+  private final ArenaManager manager;
 
-    public ArenaEventHandler(TobnetArena arena, ArenaManager manager) {
-
-        this.arena = arena;
-        this.manager = manager;
-    }
+  public ArenaEventHandler(TobnetArena arena, ArenaManager manager) {
+    this.arena = arena;
+    this.manager = manager;
+  }
 }

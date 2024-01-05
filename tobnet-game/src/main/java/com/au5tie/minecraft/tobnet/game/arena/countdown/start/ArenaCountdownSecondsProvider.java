@@ -16,14 +16,14 @@ import lombok.Getter;
 @Getter
 public abstract class ArenaCountdownSecondsProvider {
 
-    private final ArenaCountdownSecondsMode mode;
-    private final TobnetArena arena;
+  private final ArenaCountdownSecondsMode mode;
+  private final TobnetArena arena;
 
-    /**
-     * Determines the starting number of seconds that the countdown should count down from.
-     *
-     * @return Countdown starting seconds.
-     * @author au5tie
-     */
-    public abstract int getStartingSeconds();
+  /**
+   * Determines the starting number of seconds that the countdown should count down from.
+   *
+   * @return Countdown starting seconds.
+   * @author au5tie
+   */
+  public abstract int getStartingSeconds();
 }

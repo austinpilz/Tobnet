@@ -6,7 +6,7 @@ package com.au5tie.minecraft.tobnet.game.player.display.component;
  * @author au5tie
  */
 public enum GamePlayerDisplayComponentLocation {
-    BOSS_BAR,
-    SCOREBOARD,
-    ACTION_BAR
+  BOSS_BAR,
+  SCOREBOARD,
+  ACTION_BAR,
 }

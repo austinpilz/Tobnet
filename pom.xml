@@ -13,8 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>16</java.version>
-        <spigot.api.version>1.19.3</spigot.api.version>
-        <spigot.minor.version>3</spigot.minor.version>
+        <spigot.api.version>1.20.2</spigot.api.version>
         <spigot.version>${spigot.api.version}-R0.1-SNAPSHOT</spigot.version>
         <lombok.version>1.18.20</lombok.version>
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
@@ -151,6 +150,12 @@
                             <phase>compile</phase>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.hubspot.maven.plugins</groupId>
+                    <artifactId>prettier-maven-plugin</artifactId>
+                    <!-- Find the latest version at https://github.com/jhipster/prettier-java/releases -->
+                    <version>0.8</version>
                 </plugin>
             </plugins>
         </pluginManagement>

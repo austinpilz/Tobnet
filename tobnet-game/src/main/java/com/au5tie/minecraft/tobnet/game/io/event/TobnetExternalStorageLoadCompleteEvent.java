@@ -13,5 +13,4 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class TobnetExternalStorageLoadCompleteEvent extends TobnetCustomEvent {
-}
+public class TobnetExternalStorageLoadCompleteEvent extends TobnetCustomEvent {}

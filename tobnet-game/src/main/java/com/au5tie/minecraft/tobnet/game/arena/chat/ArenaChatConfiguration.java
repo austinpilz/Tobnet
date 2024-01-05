@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class ArenaChatConfiguration extends ArenaConfiguration {
 
-    private boolean announcePlayerJoin = true;
-    private boolean announcePlayerLeave = true;
+  private boolean announcePlayerJoin = true;
+  private boolean announcePlayerLeave = true;
 }
